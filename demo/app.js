@@ -588,13 +588,17 @@ window.removeInvestigatorInvoice = function(id) {
     var totalValueCr = (totalValue / 10000000).toFixed(1);
     
     var isCorporate = ring.closure_type === "corporate";
-    var closureText = isCorporate ? "the circle closes through a shared director" : "ended up back where it started";
-    
-    var entitiesCount = (ring.entities || []).length;
-    var summaryHTML = 
-      "<div class='summary-row1'><strong>" + entitiesCount + " companies</strong> billed each other in a closed circle &mdash;</div>" +
-      "<div class='summary-row2'>₹" + totalValueCr + " Cr moved in " + days + " days and " + closureText + ".</div>" +
-      "<div class='summary-row3'><span class='risk'>[FLAGGED FRAUD]</span></div>";
+    var summaryLine, sentenceLine;
+    var totalValueFormatted = "&#8377;" + totalValueCr + " Cr";
+    if (isCorporate) {
+      summaryLine = entitiesCount + " companies form a circle that closes through a shared director";
+      sentenceLine = totalValueFormatted + " moved across " + invoiceCount + " invoices.";
+    } else {
+      summaryLine = entitiesCount + " companies billed each other in a closed circle";
+      sentenceLine = days > 0
+        ? totalValueFormatted + " moved in " + days + " days and ended up back where it started."
+        : totalValueFormatted + " moved across " + invoiceCount + " invoices and ended up back where it started.";
+    }
 
     var isExpanded = false;
     try {
@@ -609,22 +613,29 @@ window.removeInvestigatorInvoice = function(id) {
     header.className = "ring-header ring-header-btn";
     header.setAttribute("aria-expanded", isExpanded.toString());
     
+    var score = (ring.aggregate || ring.aggregate_score || 0);
+    var isFraud = score >= 0.70;
+    var badgeStyle = isFraud 
+        ? "background-color:#9E3B3B; color:#ffffff; border:1px solid #D65A5A; padding:3px 6px; font-size:9px; font-weight:700; border-radius:2px; letter-spacing:0.5px;" 
+        : "background-color:rgba(95, 145, 121, 0.2); color:#5F9179; border:1px solid rgba(95, 145, 121, 0.4); padding:3px 6px; font-size:9px; font-weight:700; border-radius:2px; letter-spacing:0.5px;";
+    var badgeText = isFraud ? "FLAGGED FRAUD" : "BENIGN LOOP";
+
     header.innerHTML = 
-      "<div class='rh-toggle'>" +
-        "<span class='rh-rank'>#" + (rank<10?"0"+rank:rank) + "</span>" +
-        "<span class='rh-chevron'>&#9656;</span>" +
+      "<div class='rh-toggle' style='display:flex; align-items:center; gap:12px; margin-right:8px;'>" +
+        "<span class='rh-chevron' style='font-size:10px; color:var(--text-muted); display:inline-block; transition:transform 0.2s;'>&#9656;</span>" +
+        "<span class='rh-rank' style='font-family:var(--font-mono); font-size:11px; color:var(--text-muted); min-width:24px;'>#" + (rank<10?"0"+rank:rank) + "</span>" +
       "</div>" +
-      "<div class='rh-summary'>" + summaryHTML + "</div>" +
-      "<div class='rh-metrics'>" +
-        "<div class='metric-group metric-loss'>" +
-          "<span class='metric-val risk mono'>₹" + expLossCr.toFixed(2) + " Cr</span>" +
-          "<span class='metric-label' data-gloss='Expected Loss'>at risk</span>" +
+      "<div class='rh-summary' style='flex:1; text-align:left; line-height:1.4;'>" +
+        "<div style='font-size:12px; color:var(--text-main);'>" + summaryLine + ".</div>" +
+        "<div style='font-size:10px; color:var(--text-muted); margin-top:2px;'>" + sentenceLine + "</div>" +
+      "</div>" +
+      "<div class='rh-right' style='display:flex; align-items:center; gap:20px;'>" +
+        "<span class='status-pill risk' style='" + badgeStyle + "'>" + badgeText + "</span>" +
+        "<div style='text-align:right; min-width:90px;'>" +
+          "<div class='metric-val risk mono' style='font-size:15px; font-weight:600; color:var(--risk-coral); line-height:1;'>&#8377;" + expLossCr.toFixed(2) + " Cr</div>" +
+          "<div style='font-size:9px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-top:4px;'>AT RISK</div>" +
         "</div>" +
-        "<div class='metric-group metric-agg' style='margin-right: 12px;'>" +
-          "<span class='metric-val mono' style='font-size:12px; color:var(--text-muted);'>" + (ring.aggregate || ring.aggregate_score || 0).toFixed(2) + "</span>" +
-          "<span class='metric-label' data-gloss='Aggregate geometric mean score'>AGGREGATE</span>" +
-        "</div>" +
-        "<div class='rh-id mono'>" + ring.ring_id + "</div>" +
+        "<div class='rh-id mono' style='font-size:10px; color:var(--text-muted); min-width:40px; text-align:right; opacity:0.6;'>" + ring.ring_id + "</div>" +
       "</div>";
       
     header.onclick = function() {
