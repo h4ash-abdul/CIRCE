@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
         window.INVESTIGATOR_INVOICES = {};
         clearBtn.style.display = "none";
         
-        fetch("http://localhost:8099/api/rescore", {
+        fetch("/api/rescore", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ investigator_invoices: [] })
@@ -195,7 +195,7 @@ window.submitAddInvoice = function() {
   
   // NOTE: my server was started on port 8099 above, let me check the python code for default...
   // wait, I passed port 8099 in my run_command.
-  fetch("http://localhost:8099/api/rescore", {
+  fetch("/api/rescore", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ investigator_invoices: invList })
@@ -237,7 +237,7 @@ window.removeInvestigatorInvoice = function(id) {
     closeModal("invoice-modal");
     
     var invList = Object.values(window.INVESTIGATOR_INVOICES);
-    fetch("http://localhost:8099/api/rescore", {
+    fetch("/api/rescore", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ investigator_invoices: invList })
