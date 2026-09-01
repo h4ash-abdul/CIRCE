@@ -589,6 +589,7 @@ window.removeInvestigatorInvoice = function(id) {
     
     var isCorporate = ring.closure_type === "corporate";
     var summaryLine, sentenceLine;
+    var entitiesCount = (ring.entities || []).length;
     var totalValueFormatted = "&#8377;" + totalValueCr + " Cr";
     if (isCorporate) {
       summaryLine = entitiesCount + " companies form a circle that closes through a shared director";
