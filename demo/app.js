@@ -617,8 +617,8 @@ window.removeInvestigatorInvoice = function(id) {
     var score = (ring.aggregate || ring.aggregate_score || 0);
     var isFraud = score >= 0.70;
     var badgeStyle = isFraud 
-        ? "background-color:#9E3B3B; color:#ffffff; border:1px solid #D65A5A; padding:3px 6px; font-size:9px; font-weight:700; border-radius:2px; letter-spacing:0.5px;" 
-        : "background-color:rgba(95, 145, 121, 0.2); color:#5F9179; border:1px solid rgba(95, 145, 121, 0.4); padding:3px 6px; font-size:9px; font-weight:700; border-radius:2px; letter-spacing:0.5px;";
+        ? "font-family:var(--font-mono); background-color:#9E3B3B; color:#ffffff; border:1px solid #D65A5A; padding:3px 7px; font-size:9px; font-weight:600; border-radius:2px; letter-spacing:0.5px;" 
+        : "font-family:var(--font-mono); background-color:rgba(95, 145, 121, 0.2); color:#5F9179; border:1px solid var(--border-muted); padding:3px 7px; font-size:9px; font-weight:600; border-radius:2px; letter-spacing:0.5px;";
     var badgeText = isFraud ? "FLAGGED FRAUD" : "BENIGN LOOP";
 
     header.innerHTML = 
