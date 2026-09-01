@@ -1652,3 +1652,12 @@ body {
   margin-left: auto;
   color: var(--text-dark);
   border-color: transparent;
+
+
+#tour-skip {
+  color: #E8C468;
+  border-color: #E8C468;
+}
+#tour-skip:hover {
+  background-color: rgba(232, 196, 104, 0.1);
+}
