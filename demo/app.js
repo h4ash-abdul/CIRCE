@@ -524,13 +524,21 @@ window.removeInvestigatorInvoice = function(id) {
     return wrapper;
   }
 
+  
+  var glossMap = {
+    "value": "Money comes back around - each company passes on nearly what it received instead of actually buying something.",
+    "product": "The goods never change - the same commodity code is passed along unchanged.",
+    "timing": "The invoices are unnaturally evenly spaced and fast.",
+    "externality": "These companies trade almost only with each other, not the wider market. 1.00 = entirely internal."
+  };
+
   function scoreRow(sig, score, isAbstained, evidence) {
     var wrapper = document.createElement("div");
     wrapper.className = "score-row";
     if (isAbstained) {
       var emptySegs = "";
       for (var i = 0; i < 10; i++) emptySegs += "<div class='sig-seg'></div>";
-      wrapper.innerHTML = "<div class='sig-name'>" + sig.toUpperCase() + "</div><div class='sig-bar-wrap'><div class='sig-bar-track'>" + emptySegs + "</div></div><div class='sig-val mono'>0.00</div>";
+      wrapper.innerHTML = "<div class='sig-name'><span class='gloss' tabindex='0' data-gloss='" + (glossMap[sig] || "").replace(/'/g, "&#39;") + "'>" + sig.toUpperCase() + "</span></div><div class='sig-bar-wrap'><div class='sig-bar-track'>" + emptySegs + "</div></div><div class='sig-val mono'>0.00</div>";
     } else {
       var filled = Math.round((score || 0) * 10);
       var isHigh = score > 0.8;
@@ -539,7 +547,7 @@ window.removeInvestigatorInvoice = function(id) {
         segs += "<div class='sig-seg" + (i < filled ? (isHigh ? " filled high" : " filled") : "") + "'></div>";
       }
       var valClass = isHigh ? "sig-val risk mono" : "sig-val mono";
-      wrapper.innerHTML = "<div class='sig-name'>" + sig.toUpperCase() + "</div>" +
+      wrapper.innerHTML = "<div class='sig-name'><span class='gloss' tabindex='0' data-gloss='" + (glossMap[sig] || "").replace(/'/g, "&#39;") + "'>" + sig.toUpperCase() + "</span></div>" +
                           "<div class='sig-bar-wrap'><div class='sig-bar-track'>" + segs + "</div></div>" +
                           "<div class='" + valClass + "'>" + score.toFixed(2) + "</div>";
     }
@@ -675,7 +683,16 @@ window.removeInvestigatorInvoice = function(id) {
     sTitle.textContent = "MODEL SCORES";
     scores.appendChild(sTitle);
     
-    var sigs = ["value", "product", "timing", "externality"];
+        var closureRow = document.createElement("div");
+    closureRow.style.cssText = "font-size:10px; color:var(--text-muted); margin-bottom:10px;";
+    var closureGloss = isCorporate
+      ? "class='gloss' tabindex='0' data-gloss='The circle closes through a shared director rather than a final invoice.'"
+      : "class='gloss' tabindex='0' data-gloss='The circle closes through invoices alone.'";
+    closureRow.innerHTML = "<span " + closureGloss + ">" +
+      (isCorporate ? "Corporate closed" : "Transaction closed") + "</span>";
+    scores.appendChild(closureRow);
+
+      var sigs = ["value", "product", "timing", "externality"];
     var abstainedList = ring.abstained || [];
     sigs.forEach(function(sig) {
       var isAbstained = abstainedList.indexOf(sig) !== -1;

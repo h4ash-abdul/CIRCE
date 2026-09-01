@@ -444,7 +444,9 @@ body {
   color: var(--text-main);
   font-size: 11px;
   font-family: var(--font-sans);
-  white-space: nowrap;
+  white-space: normal;
+  width: 240px;
+  text-align: left;
   border-radius: 4px;
   border: 1px solid var(--border-muted);
   pointer-events: none;
@@ -908,7 +910,9 @@ body {
   color: var(--text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  width: 240px;
+  text-align: left;
 }
 
 .ls-bar-track {
