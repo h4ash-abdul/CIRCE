@@ -11,7 +11,7 @@ from graph.run import find_candidate_rings
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     pass
 
-class OuroborosHandler(SimpleHTTPRequestHandler):
+class CirceHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory="demo", **kwargs)
 
@@ -111,7 +111,7 @@ class OuroborosHandler(SimpleHTTPRequestHandler):
 
 def run(port=8098):
     server_address = ('', port)
-    httpd = ThreadingHTTPServer(server_address, OuroborosHandler)
+    httpd = ThreadingHTTPServer(server_address, CirceHandler)
     print(f"Serving on port {port}...")
     httpd.serve_forever()
 
