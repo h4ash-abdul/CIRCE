@@ -338,7 +338,7 @@ window.removeInvestigatorInvoice = function(id) {
       markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse",
     });
     marker.appendChild(svgEl("path", {
-      d: "M1 1L9 5L1 9", fill: "var(--risk-coral)", stroke: "none",
+      d: "M1 1L9 5L1 9", fill: "none", stroke: "var(--risk-coral)", "stroke-width": "1.5", "stroke-linecap": "round", "stroke-linejoin": "round",
     }));
     defs.appendChild(marker);
     
@@ -371,7 +371,7 @@ window.removeInvestigatorInvoice = function(id) {
       });
       Object.keys(bpos).forEach(function (id) {
         backdropGroup.appendChild(svgEl("circle", {
-          cx: bpos[id].x, cy: bpos[id].y, r: 2, class: "backdrop-node",
+          cx: bpos[id].x, cy: bpos[id].y, r: 3, class: "backdrop-node",
         }));
       });
     }
