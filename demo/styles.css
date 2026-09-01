@@ -428,7 +428,7 @@ body {
 
 [data-gloss] {
   position: relative;
-  text-decoration: underline dotted var(--text-muted);
+  
   cursor: help;
 }
 
