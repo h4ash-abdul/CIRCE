@@ -1400,7 +1400,7 @@ body {
 /* Edges */
 .hop-invoice {
   stroke: var(--risk-coral);
-  stroke-width: 1.5px;
+  stroke-width: 2px;
   transition: stroke-opacity 0.3s ease, stroke-width 0.3s ease;
 }
 
@@ -1437,7 +1437,7 @@ body {
 .node-circle {
   fill: var(--bg-panel);
   stroke: var(--accent-teal);
-  stroke-width: 2px;
+  stroke-width: 3px;
   transition: fill var(--duration-fast) var(--ease-out),
               stroke var(--duration-fast) var(--ease-out),
               stroke-width var(--duration-fast) var(--ease-out);
@@ -1446,9 +1446,9 @@ body {
 .node-label {
   fill: #ffffff;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 12px;
   pointer-events: none;
-  font-weight: 600;
+  font-weight: 700;
   paint-order: stroke fill;
   stroke: #000000;
   stroke-width: 3px;

@@ -313,7 +313,7 @@ window.removeInvestigatorInvoice = function(id) {
     var size = 320;
     var cx = size / 2, cy = size / 2;
     var ringR = Math.min(82, 28 + n * 6);
-    var nodeR = 18; // slightly larger than old 16
+    var nodeR = 22; // slightly larger than old 16
     var keepOutR = ringR + nodeR + 12;
 
     var pos = {};
@@ -335,10 +335,10 @@ window.removeInvestigatorInvoice = function(id) {
     var defs = svgEl("defs", {});
     var marker = svgEl("marker", {
       id: markerId, viewBox: "0 0 10 10", refX: "6", refY: "5",
-      markerWidth: "5", markerHeight: "5", orient: "auto-start-reverse",
+      markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse",
     });
     marker.appendChild(svgEl("path", {
-      d: "M1 1L9 5L1 9", fill: "var(--accent-coral)", stroke: "none",
+      d: "M1 1L9 5L1 9", fill: "var(--risk-coral)", stroke: "none",
     }));
     defs.appendChild(marker);
     
@@ -2693,7 +2693,7 @@ window.removeInvestigatorInvoice = function(id) {
       var pad = 6;
       if (!rect) {
         // No target — hide spotlight, centre card
-        spotlight.style.display = "none";
+        spotlight.style.display = "none"; card.classList.remove("center");
         card.classList.add("center");
         return;
       }
@@ -2755,7 +2755,7 @@ window.removeInvestigatorInvoice = function(id) {
     function tourEnd(markSeen) {
       overlay.classList.add("hidden");
       overlay.classList.remove("active");
-      spotlight.style.display = "none";
+      spotlight.style.display = "none"; card.classList.remove("center");
       if (markSeen) {
         try { localStorage.setItem("Circe_guide_seen", "1"); } catch(e) {}
       }
@@ -2796,9 +2796,7 @@ window.removeInvestigatorInvoice = function(id) {
     // window.initializeCirce — already wired in constellation.js:103; auto-start tour on first visit
     window.initializeCirce = function() {
       try {
-        if (!localStorage.getItem("Circe_guide_seen")) {
-          setTimeout(tourStart, 400);
-        }
+        setTimeout(tourStart, 400);
       } catch(e) {}
     };
   }
