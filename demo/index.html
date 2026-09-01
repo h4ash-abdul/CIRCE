@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OUROBOROS - FINANCIAL RING INTELLIGENCE</title>
+<title>CIRCE - FINANCIAL RING INTELLIGENCE</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1788084218">
+<link rel="stylesheet" href="styles.css?v=deepblack15">
 </head>
 <body>
 
-<div id="landing-page" class="landing-page relative min-h-screen overflow-hidden flex flex-col font-sans text-white bg-black selection:bg-[#E8C468]/30 selection:text-[#E8C468]" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 3000; transition: opacity 0.8s ease, visibility 0.8s ease; background-color: #0A0A0A; display: flex; flex-direction: column;">
+<div id="landing-page" class="landing-page relative min-h-screen overflow-hidden flex flex-col font-sans text-white bg-black selection:bg-[#E8C468]/30 selection:text-[#E8C468]" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 3000; transition: opacity 0.8s ease, visibility 0.8s ease; background-color: #000000; display: flex; flex-direction: column;">
 
     <!-- WebGL Constellation Canvas -->
     <div style="position:absolute; top:0; left:0; right:0; bottom:0; z-index:0; pointer-events:none; opacity:0.8;">
@@ -53,11 +53,13 @@
 
         .circe-title-text {
             font-family: 'Yellowtail', cursive;
-            font-size: clamp(100px, 14vw, 200px); 
+            font-size: clamp(120px, 17vw, 240px); 
             font-weight: 400;
             color: #E8C468;
             margin: 0;
-            padding: 20px; 
+            padding: 20px;
+            text-align: center;
+            transform: translateX(-3%) rotate(-3deg);
             line-height: 1;
             text-shadow: 0 0 15px rgba(232, 196, 104, 0.3);
             
@@ -81,7 +83,7 @@
             font-weight: 500;
             font-size: 11px;
             letter-spacing: 0.25em;
-            color: #5A6274;
+            color: #4e5568;
             opacity: 0;
             transform: translateY(10px);
             animation: elegantFadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 1.2s forwards;
@@ -126,7 +128,7 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 400;
             font-size: 11px;
-            color: #4A5161;
+            color: #3e4350;
             letter-spacing: 0.05em;
             opacity: 0;
             animation: elegantFadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 2.0s forwards;
@@ -142,25 +144,36 @@
   <!-- TOP HEADER -->
   <header class="topbar">
     <div class="topbar-left">
-      <h1 class="brand">OUROBOROS</h1>
+      <h1 class="brand">Circe</h1>
       <span class="brand-sub">FINANCIAL RING INTELLIGENCE</span>
     </div>
     <div class="topbar-center" id="global-stats-container">
       <!-- Populated by JS -->
     </div>
     <div class="topbar-right">
-      <div class="status-badge system-online"><span class="dot"></span> SYSTEM ONLINE</div>
-      <div class="status-badge simulated-data"><span class="dot"></span> SIMULATED DATA</div>
+      <button id="guide-me-btn" class="btn" style="padding:4px 8px; font-size:10px; margin-right:8px; border-color:var(--accent-teal); color:var(--accent-teal);">GUIDE ME</button>
+      <div class="status-badge system-online"><span class="dot"></span> SECURE &middot; SIMULATED DATA</div>
     </div>
   </header>
 
   <!-- SECONDARY NAVIGATION -->
-  <nav class="primary-nav">
-    <div class="nav-container">
-      <button class="tab-btn active" data-target="view-queue">RING REVIEW</button>
-      <button class="tab-btn" data-target="view-network">INTERCONNECTION MAP</button>
-      <button class="tab-btn" data-target="view-directory">ENTITY DIRECTORY</button>
-      <button class="tab-btn" data-target="view-ledger">INVOICE LEDGER</button>
+  <nav class="stepper-nav">
+    <div class="stepper-container">
+      <div class="step active" data-target="view-queue">
+        <span class="step-num">1</span> <span class="step-label">RING REVIEW</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-target="view-network">
+        <span class="step-num">2</span> <span class="step-label">INTERCONNECTION MAP</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-target="view-directory">
+        <span class="step-num">3</span> <span class="step-label">ENTITY DIRECTORY</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-target="view-ledger">
+        <span class="step-num">4</span> <span class="step-label">INVOICE LEDGER</span>
+      </div>
     </div>
   </nav>
 
@@ -169,8 +182,42 @@
     
     <!-- RING REVIEW -->
     <div id="view-queue" class="view-section active">
+      <div class="ledger-header-strip" style="margin-bottom: 16px;">
+        <div class="ledger-controls">
+          <input type="text" id="ring-search" class="control-input" placeholder="Search Ring ID..." style="width: 200px;" />
+          
+          <select id="ring-filter-agg" class="control-select">
+            <option value="all">ALL AGGREGATE SCORES</option>
+            <option value="critical">CRITICAL (&gt; 0.80)</option>
+            <option value="high">HIGH (0.50 &ndash; 0.80)</option>
+            <option value="moderate">MODERATE (&lt; 0.50)</option>
+          </select>
+          
+          <select id="ring-filter-loss" class="control-select">
+            <option value="all">ALL EXPECTED LOSS</option>
+            <option value="high">&gt; ₹50 Cr Loss</option>
+            <option value="medium">&gt; ₹10 Cr Loss</option>
+            <option value="low">&lt; ₹10 Cr Loss</option>
+          </select>
+          
+          <select id="ring-filter-size" class="control-select">
+            <option value="all">ALL RING SIZES</option>
+            <option value="large">5+ Entities</option>
+            <option value="small">3&ndash;4 Entities</option>
+          </select>
+          
+          <select id="ring-filter-type" class="control-select">
+            <option value="all">ALL CLOSURE TYPES</option>
+            <option value="corporate">Shared Director (Corporate)</option>
+            <option value="invoice">Cyclic Trade (Invoice)</option>
+          </select>
+        </div>
+      </div>
       <div id="stats" class="summary-strip"></div>
       <main id="queue" class="queue-grid"></main>
+      <div id="ring-show-more-container" style="text-align: center; margin-top: 24px; margin-bottom: 40px; display: none;">
+        <button id="ring-show-more-btn" class="btn" style="padding: 10px 24px; font-size: 12px; font-weight: 600; border-color: var(--accent-teal); color: var(--accent-teal);">SHOW MORE</button>
+      </div>
     </div>
 
     <!-- INTERCONNECTION MAP -->
@@ -252,9 +299,9 @@
               <th>INDUSTRY</th>
               <th>NIC CODE</th>
               <th>REGISTERED</th>
-              <th>INVOICES</th>
-              <th>RINGS</th>
-              <th class="val-col">EXPECTED LOSS</th>
+              <th class="col-num">INVOICES</th>
+              <th class="col-num">RINGS</th>
+              <th class="col-num">EXPECTED LOSS</th>
             </tr>
           </thead>
           <tbody id="directory-body"></tbody>
@@ -299,7 +346,7 @@
               <th>DATE</th>
               <th>SELLER</th>
               <th>BUYER</th>
-              <th>VALUE (₹)</th>
+              <th class="col-num">VALUE (₹)</th>
               <th>HS CODE</th>
               <th>DISCOUNTING</th>
             </tr>
@@ -400,9 +447,26 @@
   </div>
 </div>
 
-<script src="data.js?v=1788084218"></script>
-<script src="app.js?v=1788084218"></script>
-<script src="constellation.js?v=1788084218"></script>
+<!-- GUIDE OVERLAY -->
+<div id="guide-overlay" class="hidden" style="position: fixed; bottom: 32px; right: 32px; z-index: 3000; width: 400px; background-color: var(--bg-panel); border: 1px solid var(--accent-teal); border-radius: 4px; box-shadow: 0 8px 32px rgba(0,0,0,0.8);">
+  <div class="modal-content" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+    <div class="modal-header" style="border-bottom: 1px solid var(--border-muted); padding: 12px 16px;">
+      <h2 id="guide-title" style="margin: 0; font-size: 14px; color: var(--accent-teal);">Guide</h2>
+      <button class="modal-close" id="guide-close" style="font-size: 18px;">&times;</button>
+    </div>
+    <div class="modal-body" id="guide-body" style="min-height: 80px; padding: 16px; font-size: 13px; line-height: 1.5; color: var(--text-main);">
+    </div>
+    <div class="modal-footer" style="padding: 12px 16px; border-top: 1px solid var(--border-muted); justify-content: space-between;">
+      <button class="btn" id="guide-prev" style="padding: 4px 12px; font-size: 11px;">PREV</button>
+      <div id="guide-dots" class="mono" style="font-size:12px; color:var(--text-muted);"></div>
+      <button class="btn primary-action" id="guide-next" style="padding: 4px 12px; font-size: 11px;">NEXT</button>
+    </div>
+  </div>
+</div>
+
+<script src="data.js?v=deepblack15"></script>
+<script src="app.js?v=deepblack15"></script>
+<script src="constellation.js?v=deepblack15"></script>
 <script>
   // Global stats populator
   document.addEventListener("DOMContentLoaded", function() {
@@ -413,10 +477,13 @@
       
       var container = document.getElementById("global-stats-container");
       container.innerHTML = 
-        "<div class='global-stat'><span class='gs-label'>DATASET</span></div>" +
+        "<div class='global-stats-wrapper'>" +
+        "<div class='gs-header'>DATASET</div>" +
+        "<div class='gs-divider'></div>" +
         "<div class='global-stat'><span class='gs-val'>" + eCount + "</span><span class='gs-label'>ENTITIES</span></div>" +
         "<div class='global-stat'><span class='gs-val'>" + iCount + "</span><span class='gs-label'>INVOICES</span></div>" +
-        "<div class='global-stat'><span class='gs-val'>" + rCount + "</span><span class='gs-label'>RINGS</span></div>";
+        "<div class='global-stat'><span class='gs-val'>" + rCount + "</span><span class='gs-label'>RINGS</span></div>" +
+        "</div>";
     }
   });
 </script>

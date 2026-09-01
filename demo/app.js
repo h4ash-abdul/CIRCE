@@ -97,9 +97,28 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.removeItem("ouroboros_investigator_invoices");
         window.INVESTIGATOR_INVOICES = {};
         clearBtn.style.display = "none";
-        if (typeof renderLedger === "function") renderLedger();
-        if (typeof updateDirectory === "function") updateDirectory();
-        if (typeof renderNetwork === "function") renderNetwork();
+        
+        fetch("http://localhost:8099/api/rescore", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ investigator_invoices: [] })
+        }).then(function(res) {
+          return res.json().then(function(data) {
+            if (!res.ok) throw new Error(data.error || "Rescore failed");
+            return data;
+          });
+        }).then(function(data) {
+          if (data.rings) {
+            window.SCORED.rings = data.rings;
+            window.SCORED.count = data.rings.length;
+            if (typeof render === "function") render();
+            if (typeof renderLedger === "function") renderLedger();
+            if (typeof updateDirectory === "function") updateDirectory();
+            if (typeof renderNetwork === "function") renderNetwork();
+          }
+        }).catch(function(e) {
+          alert("Backend rescore failed: " + e.message);
+        });
       }
     };
   }
@@ -169,20 +188,46 @@ window.submitAddInvoice = function() {
   window.INVESTIGATOR_INVOICES[id] = inv;
   localStorage.setItem("ouroboros_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
   
-  document.getElementById("add-invoice-modal").classList.add("hidden");
+  var invList = Object.values(window.INVESTIGATOR_INVOICES);
+  err.textContent = "Rescoring network... please wait.";
+  err.style.color = "var(--text-main)";
+  err.style.display = "block";
   
-  var clearBtn = document.getElementById("clear-investigator-btn");
-  if (clearBtn) clearBtn.style.display = "inline-block";
-
-  if (typeof renderLedger === "function") renderLedger();
-  if (typeof updateDirectory === "function") updateDirectory();
-  if (typeof renderNetwork === "function") renderNetwork();
-  
-  // Show the invoice detail immediately
-  closeModal("entity-modal");
-  closeModal("add-invoice-modal");
-  openInvoiceModal(id);
-  openModal("invoice-modal");
+  // NOTE: my server was started on port 8099 above, let me check the python code for default...
+  // wait, I passed port 8099 in my run_command.
+  fetch("http://localhost:8099/api/rescore", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ investigator_invoices: invList })
+  }).then(function(res) {
+    return res.json().then(function(data) {
+      if (!res.ok) throw new Error(data.error || "Rescore failed");
+      return data;
+    });
+  }).then(function(data) {
+    if (data.rings) {
+      window.SCORED.rings = data.rings;
+      window.SCORED.count = data.rings.length;
+      if (typeof render === "function") render();
+      if (typeof renderLedger === "function") renderLedger();
+      if (typeof updateDirectory === "function") updateDirectory();
+      if (typeof renderNetwork === "function") renderNetwork();
+    }
+    
+    document.getElementById("add-invoice-modal").classList.add("hidden");
+    var clearBtn = document.getElementById("clear-investigator-btn");
+    if (clearBtn) clearBtn.style.display = "inline-block";
+    
+    closeModal("entity-modal");
+    openInvoiceModal(id);
+    openModal("invoice-modal");
+  }).catch(function(e) {
+    err.textContent = "Error: " + e.message;
+    err.style.color = "var(--risk-coral)";
+    // Revert
+    delete window.INVESTIGATOR_INVOICES[id];
+    localStorage.setItem("ouroboros_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
+  });
 };
 
 window.removeInvestigatorInvoice = function(id) {
@@ -190,13 +235,33 @@ window.removeInvestigatorInvoice = function(id) {
     delete window.INVESTIGATOR_INVOICES[id];
     localStorage.setItem("ouroboros_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
     closeModal("invoice-modal");
-    if (Object.keys(window.INVESTIGATOR_INVOICES).length === 0) {
-      var clearBtn = document.getElementById("clear-investigator-btn");
-      if (clearBtn) clearBtn.style.display = "none";
-    }
-    if (typeof renderLedger === "function") renderLedger();
-    if (typeof updateDirectory === "function") updateDirectory();
-    if (typeof renderNetwork === "function") renderNetwork();
+    
+    var invList = Object.values(window.INVESTIGATOR_INVOICES);
+    fetch("http://localhost:8099/api/rescore", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ investigator_invoices: invList })
+    }).then(function(res) {
+      return res.json().then(function(data) {
+        if (!res.ok) throw new Error(data.error || "Rescore failed");
+        return data;
+      });
+    }).then(function(data) {
+      if (data.rings) {
+        window.SCORED.rings = data.rings;
+        window.SCORED.count = data.rings.length;
+        if (typeof render === "function") render();
+        if (typeof renderLedger === "function") renderLedger();
+        if (typeof updateDirectory === "function") updateDirectory();
+        if (typeof renderNetwork === "function") renderNetwork();
+      }
+      if (Object.keys(window.INVESTIGATOR_INVOICES).length === 0) {
+        var clearBtn = document.getElementById("clear-investigator-btn");
+        if (clearBtn) clearBtn.style.display = "none";
+      }
+    }).catch(function(e) {
+      alert("Backend rescore failed: " + e.message);
+    });
   }
 };
 
@@ -242,7 +307,7 @@ window.removeInvestigatorInvoice = function(id) {
     wrapper.className = "graph-wrapper";
     wrapper.style.position = "relative";
     wrapper.style.width = "100%";
-    wrapper.style.height = "320px";
+    wrapper.style.height = "100%";
 
     var n = ring.entities.length;
     var size = 320;
@@ -408,16 +473,7 @@ window.removeInvestigatorInvoice = function(id) {
 
     wrapper.appendChild(svg);
     
-    // Add legend
-    var legend = document.createElement("div");
-    legend.className = "graph-legend mono";
-    legend.innerHTML = `
-      <div class="gl-item"><span class="gl-node"></span> ENTITY</div>
-      <div class="gl-item"><span class="gl-edge inv"></span> TRANSACTION</div>
-      <div class="gl-item"><span class="gl-edge corp"></span> BRIDGE</div>
-      <div class="gl-item"><span class="gl-back"></span> BACKDROP</div>
-    `;
-    wrapper.appendChild(legend);
+    // Legend moved to buildCard
 
     // After we attach edges, let's add data attributes so CSS can highlight connections
     (ring.hops || []).forEach(function (hop, i) {
@@ -472,19 +528,22 @@ window.removeInvestigatorInvoice = function(id) {
     var wrapper = document.createElement("div");
     wrapper.className = "score-row";
     if (isAbstained) {
-      wrapper.innerHTML = "<div class='sig-name'>" + sig.toUpperCase() + "</div><div class='sig-bar-wrap mono'>N/A</div><div class='sig-val mono'>-</div>";
-      return wrapper;
+      var emptySegs = "";
+      for (var i = 0; i < 10; i++) emptySegs += "<div class='sig-seg'></div>";
+      wrapper.innerHTML = "<div class='sig-name'>" + sig.toUpperCase() + "</div><div class='sig-bar-wrap'><div class='sig-bar-track'>" + emptySegs + "</div></div><div class='sig-val mono'>0.00</div>";
+    } else {
+      var filled = Math.round((score || 0) * 10);
+      var isHigh = score > 0.8;
+      var segs = "";
+      for (var i = 0; i < 10; i++) {
+        segs += "<div class='sig-seg" + (i < filled ? (isHigh ? " filled high" : " filled") : "") + "'></div>";
+      }
+      var valClass = isHigh ? "sig-val risk mono" : "sig-val mono";
+      wrapper.innerHTML = "<div class='sig-name'>" + sig.toUpperCase() + "</div>" +
+                          "<div class='sig-bar-wrap'><div class='sig-bar-track'>" + segs + "</div></div>" +
+                          "<div class='" + valClass + "'>" + score.toFixed(2) + "</div>";
     }
-    var fullBlocks = Math.round((score || 0) * 10);
-    var bar = "";
-    for (var i = 0; i < 10; i++) {
-      bar += (i < fullBlocks) ? "█" : "░";
-    }
-    var valClass = (score > 0.8) ? "sig-val risk mono" : "sig-val mono";
-    wrapper.innerHTML = "<div class='sig-name'>" + sig.toUpperCase() + "</div>" +
-                        "<div class='sig-bar-wrap mono'>" + bar + "</div>" +
-                        "<div class='" + valClass + "'>" + score.toFixed(2) + "</div>";
-    
+
     if (evidence) {
       var evDiv = document.createElement("div");
       evDiv.style.gridColumn = "1 / -1";
@@ -506,23 +565,86 @@ window.removeInvestigatorInvoice = function(id) {
     var expLoss = (typeof ring.expected_loss === "number" ? ring.expected_loss : (ring.expected_loss_inr || 0));
     var expLossCr = expLoss / 10000000;
     
-    card.innerHTML = "<div class='ring-header'>" +
-      "<div class='rh-title'>" +
+    var invoiceCount = 0;
+    var totalValue = 0;
+    var minDate = null;
+    var maxDate = null;
+    
+    (ring.hops || []).forEach(function(h) {
+      if (h.hop_type === "invoice") {
+        invoiceCount++;
+        totalValue += (h.value || 0);
+        if (h.invoice_date) {
+          var d = new Date(h.invoice_date).getTime();
+          if (!minDate || d < minDate) minDate = d;
+          if (!maxDate || d > maxDate) maxDate = d;
+        }
+      }
+    });
+    var days = 0;
+    if (minDate && maxDate) {
+      days = Math.round((maxDate - minDate) / (1000 * 60 * 60 * 24));
+    }
+    var totalValueCr = (totalValue / 10000000).toFixed(1);
+    
+    var isCorporate = ring.closure_type === "corporate";
+    var closureText = isCorporate ? "the circle closes through a shared director" : "ended up back where it started";
+    
+    var entitiesCount = (ring.entities || []).length;
+    var summaryHTML = 
+      "<div class='summary-row1'><strong>" + entitiesCount + " companies</strong> billed each other in a closed circle &mdash;</div>" +
+      "<div class='summary-row2'>₹" + totalValueCr + " Cr moved in " + days + " days and " + closureText + ".</div>" +
+      "<div class='summary-row3'><span class='risk'>[FLAGGED FRAUD]</span></div>";
+
+    var isExpanded = false;
+    try {
+      var stateStr = localStorage.getItem("ouroboros_expanded_rings") || "{}";
+      var state = JSON.parse(stateStr);
+      isExpanded = (rank === 1 && state[ring.ring_id] === undefined) ? true : !!state[ring.ring_id];
+    } catch(e) {
+      isExpanded = (rank === 1);
+    }
+    
+    var header = document.createElement("button");
+    header.className = "ring-header ring-header-btn";
+    header.setAttribute("aria-expanded", isExpanded.toString());
+    
+    header.innerHTML = 
+      "<div class='rh-toggle'>" +
         "<span class='rh-rank'>#" + (rank<10?"0"+rank:rank) + "</span>" +
-        "<span class='rh-id'>" + ring.ring_id + "</span>" +
-        "<span class='rh-type'>" + ring.closure_type.toUpperCase() + " CLOSED</span>" +
+        "<span class='rh-chevron'>&#9656;</span>" +
       "</div>" +
+      "<div class='rh-summary'>" + summaryHTML + "</div>" +
       "<div class='rh-metrics'>" +
-        "<div class='metric-group'>" +
-          "<span class='metric-label'>Expected Loss</span>" +
+        "<div class='metric-group metric-loss'>" +
           "<span class='metric-val risk mono'>₹" + expLossCr.toFixed(2) + " Cr</span>" +
+          "<span class='metric-label' data-gloss='Expected Loss'>at risk</span>" +
         "</div>" +
-        "<div class='metric-group'>" +
-          "<span class='metric-label'>Aggregate</span>" +
-          "<span class='metric-val mono'>" + (ring.aggregate || ring.aggregate_score || 0).toFixed(2) + "</span>" +
+        "<div class='metric-group metric-agg' style='margin-right: 12px;'>" +
+          "<span class='metric-val mono' style='font-size:12px; color:var(--text-muted);'>" + (ring.aggregate || ring.aggregate_score || 0).toFixed(2) + "</span>" +
+          "<span class='metric-label' data-gloss='Aggregate geometric mean score'>AGGREGATE</span>" +
         "</div>" +
-      "</div>" +
-    "</div>";
+        "<div class='rh-id mono'>" + ring.ring_id + "</div>" +
+      "</div>";
+      
+    header.onclick = function() {
+      var expanded = header.getAttribute("aria-expanded") === "true";
+      var newState = !expanded;
+      header.setAttribute("aria-expanded", newState.toString());
+      bodyWrap.style.display = newState ? "block" : "none";
+      try {
+        var stateStr = localStorage.getItem("ouroboros_expanded_rings") || "{}";
+        var state = JSON.parse(stateStr);
+        state[ring.ring_id] = newState;
+        localStorage.setItem("ouroboros_expanded_rings", JSON.stringify(state));
+      } catch(e) {}
+    };
+    
+    card.appendChild(header);
+    
+    var bodyWrap = document.createElement("div");
+    bodyWrap.className = "ring-body-wrap";
+    bodyWrap.style.display = isExpanded ? "block" : "none";
     
     var body = document.createElement("div");
     body.className = "ring-body";
@@ -557,7 +679,7 @@ window.removeInvestigatorInvoice = function(id) {
       scores.appendChild(note);
     }
     body.appendChild(scores);
-    card.appendChild(body);
+    bodyWrap.appendChild(body);
     
     var contextStrip = document.createElement("div");
     contextStrip.className = "trail-header";
@@ -566,29 +688,35 @@ window.removeInvestigatorInvoice = function(id) {
     contextStrip.style.borderRadius = "0";
     contextStrip.style.backgroundColor = "var(--bg-panel)";
     
-    var invoiceCount = 0;
-    var totalValue = 0;
-    (ring.hops || []).forEach(function(h) {
-      if (h.hop_type === "invoice") {
-        invoiceCount++;
-        totalValue += (h.value || 0);
-      }
-    });
-    
     var h1 = "<div class='trail-stat-group'>";
-    h1 += "<div class='trail-stat'><span class='ts-label'>ENTITIES</span><span class='ts-val mono'>" + (ring.entities || []).length + "</span></div>";
+    h1 += "<div class='trail-stat'><span class='ts-label'>ENTITIES</span><span class='ts-val mono'>" + entitiesCount + "</span></div>";
     h1 += "<div class='trail-stat'><span class='ts-label'>INVOICES</span><span class='ts-val mono'>" + invoiceCount + "</span></div>";
     if (invoiceCount > 0) {
       h1 += "<div class='trail-stat'><span class='ts-label'>OBSERVED VALUE</span><span class='ts-val mono'>₹" + (totalValue/10000000).toFixed(2) + " Cr</span></div>";
     }
     h1 += "</div>";
-    contextStrip.innerHTML = h1;
-    card.appendChild(contextStrip);
+
+    // Legend strip integrated inside the same horizontal box
+    var legendHtml = `
+      <div class="graph-legend mono" style="padding: 0; border: none; margin-left: auto;">
+        <div class="gl-item"><span class="gl-node"></span> ENTITY</div>
+        <div class="gl-item"><span class="gl-edge inv"></span> TRANSACTION</div>
+        <div class="gl-item"><span class="gl-edge corp"></span> BRIDGE</div>
+        <div class="gl-item"><span class="gl-back"></span> BACKDROP</div>
+      </div>
+    `;
+
+    contextStrip.innerHTML = h1 + legendHtml;
+    contextStrip.style.display = "flex";
+    contextStrip.style.flexWrap = "nowrap";
+    contextStrip.style.alignItems = "center";
+    contextStrip.style.justifyContent = "space-between";
+    bodyWrap.appendChild(contextStrip);
     
     var actionsWrap = document.createElement("div");
     actionsWrap.className = "trail-btn-wrap";
-    actionsWrap.style.padding = "16px";
-    actionsWrap.style.borderTop = "1px solid var(--border-muted)";
+    actionsWrap.style.padding = "10px 16px";
+    actionsWrap.style.margin = "0";
     
     var trailBtn = document.createElement("button");
     trailBtn.className = "btn";
@@ -600,17 +728,19 @@ window.removeInvestigatorInvoice = function(id) {
     timelineBtn.textContent = "VIEW INVESTIGATION TIMELINE";
     actionsWrap.appendChild(timelineBtn);
     
-    card.appendChild(actionsWrap);
+    bodyWrap.appendChild(actionsWrap);
     
     var trailContainer = document.createElement("div");
     trailContainer.className = "trail-container hidden";
     trailContainer.style.padding = "0 16px 16px 16px";
-    card.appendChild(trailContainer);
+    bodyWrap.appendChild(trailContainer);
     
     var timelineContainer = document.createElement("div");
     timelineContainer.className = "timeline-container hidden";
     timelineContainer.style.padding = "0 16px 16px 16px";
-    card.appendChild(timelineContainer);
+    bodyWrap.appendChild(timelineContainer);
+    
+    card.appendChild(bodyWrap);
     
     trailBtn.addEventListener("click", function() {
       if (trailContainer.classList.contains("hidden")) {
@@ -673,29 +803,136 @@ window.removeInvestigatorInvoice = function(id) {
     return div;
   }
 
-  function render() {
+  var ringLimit = 10;
+
+  function updateRingReview(isAppend) {
     var statsRoot = document.getElementById("stats");
     var root = document.getElementById("queue");
+    var searchInput = document.getElementById("ring-search");
+    var aggSelect = document.getElementById("ring-filter-agg");
+    var lossSelect = document.getElementById("ring-filter-loss");
+    var sizeSelect = document.getElementById("ring-filter-size");
+    var typeSelect = document.getElementById("ring-filter-type");
+    var showMoreBtn = document.getElementById("ring-show-more-btn");
+    var showMoreContainer = document.getElementById("ring-show-more-container");
+    
     if (!root) return;
-
+    
+    if (!isAppend) {
+      if (statsRoot) statsRoot.innerHTML = "";
+      root.innerHTML = "";
+    }
+    
     if (typeof SCORED === "undefined" || !SCORED.rings || !SCORED.rings.length) {
-      var note = document.createElement("p");
-      note.className = "empty-note";
-      note.textContent = "No scored rings loaded — run build_data.py against a scored_rings artifact.";
-      root.appendChild(note);
+      if (!isAppend) {
+        var note = document.createElement("p");
+        note.className = "empty-note";
+        note.textContent = "No scored rings loaded.";
+        root.appendChild(note);
+      }
+      if (showMoreContainer) showMoreContainer.style.display = "none";
       return;
     }
 
-    var rings = SCORED.rings.slice().sort(function (a, b) {
+    var rings = SCORED.rings.slice();
+    
+    // Filtering
+    var query = (searchInput ? searchInput.value : "").toLowerCase().trim();
+    var aggFilter = aggSelect ? aggSelect.value : "all";
+    var lossFilter = lossSelect ? lossSelect.value : "all";
+    var sizeFilter = sizeSelect ? sizeSelect.value : "all";
+    var typeFilter = typeSelect ? typeSelect.value : "all";
+    
+    rings = rings.filter(function(r) {
+      if (query && r.ring_id.toLowerCase().indexOf(query) === -1) return false;
+      
+      var agg = r.aggregate || r.aggregate_score || 0;
+      if (aggFilter === "critical" && agg <= 0.8) return false;
+      if (aggFilter === "high" && (agg <= 0.5 || agg > 0.8)) return false;
+      if (aggFilter === "moderate" && agg > 0.5) return false;
+      
+      var loss = r.expected_loss || 0;
+      if (lossFilter === "high" && loss <= 500000000) return false; // > 50 Cr
+      if (lossFilter === "medium" && loss <= 100000000) return false; // > 10 Cr
+      if (lossFilter === "low" && loss > 100000000) return false; // < 10 Cr
+      
+      var size = (r.entities || []).length;
+      if (sizeFilter === "large" && size < 5) return false;
+      if (sizeFilter === "small" && (size < 3 || size > 4)) return false;
+      
+      if (typeFilter !== "all" && r.closure_type !== typeFilter) return false;
+      
+      return true;
+    });
+
+    rings.sort(function (a, b) {
       return (b.expected_loss || 0) - (a.expected_loss || 0);
     });
 
-    if (statsRoot) statsRoot.appendChild(buildStatsBar(rings));
+    if (!isAppend && statsRoot) {
+      statsRoot.appendChild(buildStatsBar(rings));
+    }
 
     var backdrop = typeof BACKDROP !== "undefined" ? BACKDROP : null;
-    rings.forEach(function (ring, i) {
-      root.appendChild(buildCard(ring, i + 1, backdrop));
+    
+    var startIdx = isAppend ? ringLimit - 10 : 0;
+    var sliceToRender = rings.slice(startIdx, ringLimit);
+    
+    sliceToRender.forEach(function (ring, i) {
+      var card = buildCard(ring, startIdx + i + 1, backdrop);
+      card.style.animationDelay = (i * 0.05) + "s";
+      root.appendChild(card);
     });
+    
+    if (showMoreContainer) {
+      if (rings.length > ringLimit) {
+        showMoreContainer.style.display = "block";
+        showMoreBtn.onclick = function() {
+          ringLimit += 10;
+          updateRingReview(true);
+        };
+      } else {
+        showMoreContainer.style.display = "none";
+      }
+    }
+  }
+
+  function render() {
+    var searchInput = document.getElementById("ring-search");
+    var aggSelect = document.getElementById("ring-filter-agg");
+    var lossSelect = document.getElementById("ring-filter-loss");
+    var sizeSelect = document.getElementById("ring-filter-size");
+    var typeSelect = document.getElementById("ring-filter-type");
+    
+    var resetLimitAndRender = function() {
+      ringLimit = 10;
+      updateRingReview();
+    };
+    
+    if (searchInput) {
+      searchInput.removeEventListener("input", resetLimitAndRender);
+      searchInput.addEventListener("input", resetLimitAndRender);
+    }
+    if (aggSelect) {
+      aggSelect.removeEventListener("change", resetLimitAndRender);
+      aggSelect.addEventListener("change", resetLimitAndRender);
+    }
+    if (lossSelect) {
+      lossSelect.removeEventListener("change", resetLimitAndRender);
+      lossSelect.addEventListener("change", resetLimitAndRender);
+    }
+    if (sizeSelect) {
+      sizeSelect.removeEventListener("change", resetLimitAndRender);
+      sizeSelect.addEventListener("change", resetLimitAndRender);
+    }
+    if (typeSelect) {
+      typeSelect.removeEventListener("change", resetLimitAndRender);
+      typeSelect.addEventListener("change", resetLimitAndRender);
+    }
+    
+    // We do not reset limit if render is called by a backend rescore, but we can do it for safety.
+    // However, if the user was on page 3, maybe we want to keep it? For simplicity we won't touch ringLimit if render is called externally.
+    updateRingReview();
   }
 
   // --- PHASE 5 ADDITIONS ---
@@ -1114,8 +1351,13 @@ window.removeInvestigatorInvoice = function(id) {
   }
 
   // --- PHASE 2 ADDITIONS ---
+  function switchTab(targetId) {
+    var step = document.querySelector(".step[data-target='" + targetId + "']");
+    if (step) step.click();
+  }
+
   function setupTabs() {
-    var tabs = document.querySelectorAll(".tab-btn");
+    var tabs = document.querySelectorAll(".step");
     var sections = document.querySelectorAll(".view-section");
     tabs.forEach(function(tab) {
       tab.addEventListener("click", function() {
@@ -1125,6 +1367,7 @@ window.removeInvestigatorInvoice = function(id) {
         document.getElementById(tab.getAttribute("data-target")).classList.add("active");
       });
     });
+    window.switchTab = switchTab;
   }
 
   function renderLedger() {
@@ -1206,7 +1449,7 @@ window.removeInvestigatorInvoice = function(id) {
         tdBuyer.innerHTML = formatEntity(inv.to);
         
         var tdAmt = document.createElement("td");
-        tdAmt.className = "mono val-col";
+        tdAmt.className = "mono col-num";
         tdAmt.textContent = "₹" + (inv.value ? inv.value.toLocaleString() : "0");
         
         var tdHs = document.createElement("td");
@@ -1533,7 +1776,7 @@ window.removeInvestigatorInvoice = function(id) {
 
   window.viewRing = function(ringId) {
     closeAllModals();
-    document.querySelector(".tab-btn[data-target='view-queue']").click();
+    window.switchTab("view-queue");
     var el = document.getElementById(ringId);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
@@ -1712,11 +1955,11 @@ window.removeInvestigatorInvoice = function(id) {
       tdDate.textContent = e.registration_date || "N/A";
 
       var tdInvs = document.createElement("td");
-      tdInvs.className = "mono";
+      tdInvs.className = "mono col-num";
       tdInvs.textContent = st.invoiceCount;
 
       var tdRings = document.createElement("td");
-      tdRings.className = "mono";
+      tdRings.className = "mono col-num";
       if (st.rings.length > 0) {
         tdRings.innerHTML = "<span style='color:var(--risk-coral); font-weight:700;'>" + st.rings.length + " RINGS</span>";
       } else {
@@ -1724,7 +1967,7 @@ window.removeInvestigatorInvoice = function(id) {
       }
 
       var tdLoss = document.createElement("td");
-      tdLoss.className = "mono val-col" + (st.expectedLoss > 0 ? " risk" : "");
+      tdLoss.className = "mono col-num" + (st.expectedLoss > 0 ? " risk" : "");
       tdLoss.textContent = st.expectedLoss > 0 ? "₹" + (st.expectedLoss / 10000000).toFixed(2) + " Cr" : "₹0.00";
 
       tr.appendChild(tdEntity);
@@ -2372,5 +2615,94 @@ window.removeInvestigatorInvoice = function(id) {
   renderDirectory();
   renderNetwork();
   render();
+
+  // --- GUIDED TOUR ---
+  var tourSteps = [
+    { tab: "view-queue", title: "Welcome to Circe", text: "Circe is an intelligence platform for detecting circular trading (TReDS fraud). The pipeline analyzes transaction networks to spot companies billing each other in closed loops to falsely inflate their revenue." },
+    { tab: "view-queue", title: "Ring Cards", text: "On the Ring Review page, every detected loop is summarized into a single card. By default, they are collapsed to give you a clean overview of the expected loss and aggregated risk." },
+    { tab: "view-queue", title: "Plain English Summaries", text: "The summary sentence gives you the key facts immediately: how many companies are involved, how much money moved, how fast it moved, and if the circle was closed by a shared director." },
+    { tab: "view-queue", title: "Model Scores", text: "Expand a ring to see the four ML model scores: Value (round amounts), Product (industry mismatch), Timing (speed of transactions), and Externality (lack of real-world trade)." },
+    { tab: "view-network", title: "Interactive Network Map", text: "Use the Interconnection Map to visualize the entire dataset. Dimmed edges represent normal trade; bright edges represent detected fraud. You can click any node to trace its connections." },
+    { tab: "view-ledger", title: "Live Ledger Injection", text: "Go to the Invoice Ledger and click 'ADD INVOICE' to manually inject a transaction. The backend will instantly rescore the network and update the UI if new fraud rings are formed." }
+  ];
+  var currentStep = 0;
+  
+  function updateGuide() {
+    var step = tourSteps[currentStep];
+    
+    if (window.switchTab) {
+      window.switchTab(step.tab);
+    }
+    
+    // Custom Step Triggers
+    if (currentStep === 1 || currentStep === 2 || currentStep === 3) {
+      // Ensure the first ring is expanded
+      var firstHeader = document.querySelector(".ring-header-btn");
+      if (firstHeader && firstHeader.getAttribute("aria-expanded") !== "true") {
+        firstHeader.click();
+      }
+    } else {
+      // Close the first ring if it was opened by the guide
+      var firstHeader = document.querySelector(".ring-header-btn");
+      if (firstHeader && firstHeader.getAttribute("aria-expanded") === "true" && currentStep !== 0) {
+        // Leave it alone if user wants it open, or collapse it
+        // actually better to just let it be.
+      }
+    }
+    
+    if (currentStep === 5) {
+      // Open add invoice modal
+      var addBtn = document.getElementById("add-invoice-btn");
+      if (addBtn) addBtn.click();
+    } else {
+      // Close add invoice modal if we navigate away
+      var modal = document.getElementById("add-invoice-modal");
+      if (modal && !modal.classList.contains("hidden")) {
+        var closeBtn = modal.querySelector(".modal-close");
+        if (closeBtn) closeBtn.click();
+      }
+    }
+    
+    document.getElementById("guide-title").textContent = step.title;
+    document.getElementById("guide-body").textContent = step.text;
+    document.getElementById("guide-dots").textContent = (currentStep + 1) + " / " + tourSteps.length;
+    
+    document.getElementById("guide-prev").style.visibility = currentStep === 0 ? "hidden" : "visible";
+    document.getElementById("guide-next").textContent = currentStep === tourSteps.length - 1 ? "FINISH" : "NEXT";
+  }
+  
+  function openGuide() {
+    currentStep = 0;
+    updateGuide();
+    document.getElementById("guide-overlay").classList.remove("hidden");
+  }
+  
+  function closeGuide() {
+    document.getElementById("guide-overlay").classList.add("hidden");
+    try {
+      localStorage.setItem("ouroboros_guided_tour", "completed");
+    } catch(e) {}
+  }
+  
+  var gClose = document.getElementById("guide-close");
+  var gPrev = document.getElementById("guide-prev");
+  var gNext = document.getElementById("guide-next");
+  var gBtn = document.getElementById("guide-me-btn");
+  
+  if(gClose) gClose.addEventListener("click", closeGuide);
+  if(gPrev) gPrev.addEventListener("click", function() {
+    if (currentStep > 0) { currentStep--; updateGuide(); }
+  });
+  if(gNext) gNext.addEventListener("click", function() {
+    if (currentStep < tourSteps.length - 1) { currentStep++; updateGuide(); }
+    else { closeGuide(); }
+  });
+  if(gBtn) gBtn.addEventListener("click", openGuide);
+  
+  setTimeout(function() {
+    var tourDone = false;
+    try { tourDone = localStorage.getItem("ouroboros_guided_tour") === "completed"; } catch(e) {}
+    if (!tourDone && gClose) openGuide();
+  }, 1000);
 
 })();

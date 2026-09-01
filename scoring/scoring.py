@@ -251,28 +251,30 @@ def evidence(ring: dict, scores: dict, entities: dict) -> dict[str, str]:
         ev["externality"] = "Abstained (no counterparty activity found in invoice registry)"
 
     # Industry consistency check (evidence string only, not folded into score).
-    # HS codes (trade-tariff chapters) and industry_code (NIC economic-activity codes,
-    # e.g. "NIC-4662" per Wire Protocol §3) are different taxonomies with no available
-    # concordance table -- comparing their prefixes is only ever valid when industry_code
-    # happens to itself be a bare numeric/HS-shaped string. Guard with isdigit() on both
-    # sides so a NIC-prefixed code produces no claim instead of a guaranteed-false one;
-    # asserting a mismatch the data can't support is worse than staying silent.
+    # Services entities (e.g. consultants, IT) legitimate trade does not carry HS codes.
+    # An HS code indicates physical goods. A services entity billing physical goods is an anomaly.
     invoice_hops = get_invoice_hops(ring)
     inconsistencies = []
+
+    ring_classes = {}
+    for eid in ring["entities"]:
+        c = entities.get(eid, {}).get("industry_class", "unknown")
+        ring_classes[c] = ring_classes.get(c, 0) + 1
+    
+    composition = ", ".join([f"{v} {k}" for k, v in ring_classes.items()])
+
     for hop in invoice_hops:
         hs_code = str(hop.get("hs_code") or "")
-        _, target_entity = get_hop_endpoints(hop)
-        if hs_code and target_entity in entities:
-            target_ind = str(entities[target_entity].get("industry_code") or "")
-            if (target_ind and hs_code.isdigit() and target_ind.isdigit()
-                    and len(hs_code) >= 2 and len(target_ind) >= 2
-                    and hs_code[:2] != target_ind[:2]):
-                inconsistencies.append(f"Entity {target_entity} ({target_ind}) received HS {hs_code}")
+        source_entity, _ = get_hop_endpoints(hop)
+        if hs_code and source_entity in entities:
+            seller_class = str(entities[source_entity].get("industry_class") or "")
+            if seller_class == "services":
+                inconsistencies.append(f"Entity {source_entity} (services) billed physical goods (HS {hs_code})")
 
     if inconsistencies:
-        ev["industry"] = "Flagged cross-industry trades: " + "; ".join(inconsistencies)
+        ev["industry"] = f"[{composition}] Flagged Mismatch: " + "; ".join(inconsistencies)
     else:
-        ev["industry"] = "All trades consistent with declared industry codes."
+        ev["industry"] = f"[{composition}] All trades consistent with declared industry classes."
 
     return ev
 
@@ -604,41 +606,39 @@ def run_checks():
     # The 4-signal evasion successfully collapses the geometric aggregate
     assert sr_adv["aggregate"] < 0.15, f"Adversarial aggregate check failed: {sr_adv['aggregate']} >= 0.15"
 
-    # Test 11 (NIC vs HS Taxonomy Guard): real entities carry "NIC-XXXX" industry_code
-    # (Wire Protocol §3), which is not comparable to a bare numeric HS code -- must
-    # not produce a false cross-industry flag. A genuine numeric mismatch must still fire.
-    r11 = {
-        "ring_id": "R11",
-        "entities": ["N1", "N2"],
-        "hops": [
-            {"from": "N1", "to": "N2", "value": 1000, "hop_type": "invoice", "invoice_date": "2023-01-01", "hs_code": "72081000"},
-        ],
-    }
-    nic_entities = {
-        "N1": {"id": "N1", "industry_code": "NIC-7208", "industry_class": "manufacturing"},
-        "N2": {"id": "N2", "industry_code": "NIC-7208", "industry_class": "manufacturing"},
-    }
-    scores11a = {
-        "value": s_value(r11), "product": s_product(r11, nic_entities), "timing": s_timing(r11), "externality": s_externality(r11, [])
-    }
-    ev11a = evidence(r11, scores11a, nic_entities)
-    assert ev11a["industry"] == "All trades consistent with declared industry codes.", f"Test 11a failed: {ev11a['industry']}"
 
-    numeric_entities = {
-        "N1": {"id": "N1", "industry_code": "72", "industry_class": "manufacturing"},
-        "N2": {"id": "N2", "industry_code": "72", "industry_class": "manufacturing"},
+    # Test 11 (Industry Consistency): Services buyer produces no flag, services seller with HS code produces flag.
+    services_entities = {
+        "S1": {"id": "S1", "industry_code": "NIC-6201", "industry_class": "services"},
+        "M1": {"id": "M1", "industry_code": "10", "industry_class": "manufacturing"},
+        "S2": {"id": "S2", "industry_code": "NIC-6202", "industry_class": "services"},
     }
-    r11b = {
-        "ring_id": "R11b",
-        "entities": ["N1", "N2"],
+    r11_buyer = {
+        "ring_id": "R11_buyer",
+        "entities": ["M1", "S1"],
         "hops": [
-            {"from": "N1", "to": "N2", "value": 1000, "hop_type": "invoice", "invoice_date": "2023-01-01", "hs_code": "85171200"},
+            # Manufacturing seller, services buyer: perfectly normal behavior (e.g. buying office equipment)
+            {"from": "M1", "to": "S1", "value": 1000, "hop_type": "invoice", "invoice_date": "2023-01-01", "hs_code": "84713010"},
         ],
     }
-    ev11b = evidence(r11b, {
-        "value": s_value(r11b), "product": s_product(r11b, numeric_entities), "timing": s_timing(r11b), "externality": s_externality(r11b, [])
-    }, numeric_entities)
-    assert ev11b["industry"].startswith("Flagged"), f"Test 11b failed: {ev11b['industry']}"
+    scores11_buyer = {
+        "value": s_value(r11_buyer), "product": s_product(r11_buyer, services_entities), "timing": s_timing(r11_buyer), "externality": s_externality(r11_buyer, [])
+    }
+    ev11_buyer = evidence(r11_buyer, scores11_buyer, services_entities)
+    assert "All trades consistent" in ev11_buyer["industry"], f"Test 11 (buyer) failed: {ev11_buyer['industry']}"
+
+    r11_seller = {
+        "ring_id": "R11_seller",
+        "entities": ["S2", "M1"],
+        "hops": [
+            # Services seller producing an HS code: anomalous (they don't sell physical goods)
+            {"from": "S2", "to": "M1", "value": 1000, "hop_type": "invoice", "invoice_date": "2023-01-01", "hs_code": "85171200"},
+        ],
+    }
+    ev11_seller = evidence(r11_seller, {
+        "value": s_value(r11_seller), "product": s_product(r11_seller, services_entities), "timing": s_timing(r11_seller), "externality": s_externality(r11_seller, [])
+    }, services_entities)
+    assert "Flagged Mismatch" in ev11_seller["industry"], f"Test 11 (seller) failed: {ev11_seller['industry']}"
 
     print("All 11 checks and adversarial benchmark passed successfully.")
 

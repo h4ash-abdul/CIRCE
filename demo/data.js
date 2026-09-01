@@ -104,7 +104,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.60",
         "externality": "Externality score: 1.00",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 3 trading, 1 services] Flagged Mismatch: Entity E054 (services) billed physical goods (HS 39012000)"
       }
     },
     {
@@ -197,7 +197,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.65",
         "externality": "Externality score: 1.00",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 services, 3 distribution, 1 trading] Flagged Mismatch: Entity E043 (services) billed physical goods (HS 39012000)"
       }
     },
     {
@@ -312,7 +312,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.32",
         "externality": "Externality score: 0.21",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 1 services, 4 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -381,7 +381,7 @@ const SCORED = {
         "product": "HS code consistency: 1.00",
         "timing": "Regularity score: 0.69",
         "externality": "Externality score: 1.00",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 manufacturing, 1 services, 1 trading] Flagged Mismatch: Entity E059 (services) billed physical goods (HS 74031100)"
       }
     },
     {
@@ -484,7 +484,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.47",
         "externality": "Externality score: 1.00",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 services, 2 distribution, 2 trading, 1 manufacturing] Flagged Mismatch: Entity E033 (services) billed physical goods (HS 74031100)"
       }
     },
     {
@@ -599,7 +599,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.19",
         "externality": "Externality score: 0.22",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 2 services, 4 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -670,7 +670,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.69",
         "externality": "Externality score: 1.00",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 manufacturing, 1 distribution, 1 services] Flagged Mismatch: Entity E049 (services) billed physical goods (HS 10063000)"
       }
     },
     {
@@ -774,7 +774,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.25",
         "externality": "Externality score: 0.27",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[1 distribution, 1 services, 5 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -878,7 +878,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.29",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[1 services, 2 distribution, 2 manufacturing, 2 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -993,7 +993,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.32",
         "externality": "Externality score: 0.29",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 distribution, 2 trading, 1 manufacturing, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1108,7 +1108,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.35",
         "externality": "Externality score: 0.24",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 4 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1223,7 +1223,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.25",
         "externality": "Externality score: 0.32",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 manufacturing, 2 trading, 3 distribution, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1338,7 +1338,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.17",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 5 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1453,7 +1453,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.31",
         "externality": "Externality score: 0.28",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[1 services, 3 distribution, 2 manufacturing, 2 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1557,7 +1557,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.45",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[1 manufacturing, 3 distribution, 2 services, 1 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1672,7 +1672,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.32",
         "externality": "Externality score: 0.40",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 4 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1776,7 +1776,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.29",
         "externality": "Externality score: 0.21",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[1 services, 2 distribution, 3 manufacturing, 1 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1880,7 +1880,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.40",
         "externality": "Externality score: 0.29",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 4 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -1984,7 +1984,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.21",
         "externality": "Externality score: 0.32",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 manufacturing, 1 trading, 1 services, 2 distribution] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2099,7 +2099,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.14",
         "externality": "Externality score: 0.28",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[1 services, 2 distribution, 3 manufacturing, 2 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2214,7 +2214,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.33",
         "externality": "Externality score: 0.24",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 distribution, 1 services, 3 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2307,7 +2307,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.44",
         "externality": "Externality score: 0.24",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 3 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2422,7 +2422,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.17",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 2 services, 2 trading, 2 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2537,7 +2537,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.20",
         "externality": "Externality score: 0.23",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 5 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2652,7 +2652,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.18",
         "externality": "Externality score: 0.21",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 2 services, 2 trading, 2 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2767,7 +2767,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.30",
         "externality": "Externality score: 0.25",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 distribution, 1 manufacturing, 3 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2882,7 +2882,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.40",
         "externality": "Externality score: 0.29",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 3 trading, 2 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -2997,7 +2997,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.28",
         "externality": "Externality score: 0.21",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 4 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3112,7 +3112,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.23",
         "externality": "Externality score: 0.33",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 5 trading, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3227,7 +3227,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.29",
         "externality": "Externality score: 0.25",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 distribution, 3 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3331,7 +3331,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.33",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 distribution, 3 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3446,7 +3446,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.19",
         "externality": "Externality score: 0.19",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 4 trading, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3561,7 +3561,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.39",
         "externality": "Externality score: 0.34",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 3 trading, 2 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3676,7 +3676,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.19",
         "externality": "Externality score: 0.25",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 2 services, 3 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3791,7 +3791,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.21",
         "externality": "Externality score: 0.23",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[5 trading, 2 distribution, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -3906,7 +3906,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.15",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 5 trading, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4021,7 +4021,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.29",
         "externality": "Externality score: 0.31",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 4 trading, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4136,7 +4136,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.07",
         "externality": "Externality score: 0.32",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 manufacturing, 2 trading, 1 services, 2 distribution] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4240,7 +4240,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.29",
         "externality": "Externality score: 0.32",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 manufacturing, 1 trading, 3 distribution, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4355,7 +4355,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.28",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[1 services, 3 distribution, 3 manufacturing, 1 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4470,7 +4470,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.19",
         "externality": "Externality score: 0.36",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 manufacturing, 2 trading, 3 distribution, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4585,7 +4585,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.17",
         "externality": "Externality score: 0.34",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 manufacturing, 1 trading, 3 distribution, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4689,7 +4689,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.10",
         "externality": "Externality score: 0.29",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 manufacturing, 2 trading, 1 services, 2 distribution] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4804,7 +4804,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.28",
         "externality": "Externality score: 0.31",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 4 trading, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -4919,7 +4919,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.29",
         "externality": "Externality score: 0.28",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 distribution, 1 services, 1 manufacturing, 2 trading] All trades consistent with declared industry classes."
       }
     },
     {
@@ -5034,7 +5034,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.10",
         "externality": "Externality score: 0.24",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[2 distribution, 5 trading, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -5127,7 +5127,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.25",
         "externality": "Externality score: 0.24",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 trading, 1 distribution, 1 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -5242,7 +5242,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.26",
         "externality": "Externality score: 0.31",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 distribution, 3 trading, 1 services] All trades consistent with declared industry classes."
       }
     },
     {
@@ -5357,7 +5357,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.29",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[4 trading, 2 distribution, 2 manufacturing] All trades consistent with declared industry classes."
       }
     },
     {
@@ -5461,7 +5461,7 @@ const SCORED = {
         "product": "Abstained (insufficient HS codes or suppressed by commodity classification)",
         "timing": "Regularity score: 0.26",
         "externality": "Externality score: 0.26",
-        "industry": "All trades consistent with declared industry codes."
+        "industry": "[3 distribution, 4 trading] All trades consistent with declared industry classes."
       }
     }
   ],
