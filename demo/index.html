@@ -447,19 +447,17 @@
   </div>
 </div>
 
-<!-- GUIDE OVERLAY -->
-<div id="guide-overlay" class="hidden" style="position: fixed; bottom: 32px; right: 32px; z-index: 3000; width: 400px; background-color: var(--bg-panel); border: 1px solid var(--accent-teal); border-radius: 4px; box-shadow: 0 8px 32px rgba(0,0,0,0.8);">
-  <div class="modal-content" style="padding: 0; background: transparent; border: none; box-shadow: none;">
-    <div class="modal-header" style="border-bottom: 1px solid var(--border-muted); padding: 12px 16px;">
-      <h2 id="guide-title" style="margin: 0; font-size: 14px; color: var(--accent-teal);">Guide</h2>
-      <button class="modal-close" id="guide-close" style="font-size: 18px;">&times;</button>
-    </div>
-    <div class="modal-body" id="guide-body" style="min-height: 80px; padding: 16px; font-size: 13px; line-height: 1.5; color: var(--text-main);">
-    </div>
-    <div class="modal-footer" style="padding: 12px 16px; border-top: 1px solid var(--border-muted); justify-content: space-between;">
-      <button class="btn" id="guide-prev" style="padding: 4px 12px; font-size: 11px;">PREV</button>
-      <div id="guide-dots" class="mono" style="font-size:12px; color:var(--text-muted);"></div>
-      <button class="btn primary-action" id="guide-next" style="padding: 4px 12px; font-size: 11px;">NEXT</button>
+<!-- TOUR OVERLAY (B2) - pointer-events managed by JS; spotlight uses box-shadow mask -->
+<div id="tour-overlay" class="hidden">
+  <div id="tour-spotlight"></div>
+  <div id="tour-card">
+    <div id="tour-counter" class="mono"></div>
+    <div id="tour-title"></div>
+    <div id="tour-body"></div>
+    <div id="tour-actions">
+      <button id="tour-back" class="btn">BACK</button>
+      <button id="tour-next" class="btn primary-action">NEXT</button>
+      <button id="tour-skip" class="btn">SKIP</button>
     </div>
   </div>
 </div>

@@ -2617,92 +2617,191 @@ window.removeInvestigatorInvoice = function(id) {
   render();
 
   // --- GUIDED TOUR ---
-  var tourSteps = [
-    { tab: "view-queue", title: "Welcome to Circe", text: "Circe is an intelligence platform for detecting circular trading (TReDS fraud). The pipeline analyzes transaction networks to spot companies billing each other in closed loops to falsely inflate their revenue." },
-    { tab: "view-queue", title: "Ring Cards", text: "On the Ring Review page, every detected loop is summarized into a single card. By default, they are collapsed to give you a clean overview of the expected loss and aggregated risk." },
-    { tab: "view-queue", title: "Plain English Summaries", text: "The summary sentence gives you the key facts immediately: how many companies are involved, how much money moved, how fast it moved, and if the circle was closed by a shared director." },
-    { tab: "view-queue", title: "Model Scores", text: "Expand a ring to see the four ML model scores: Value (round amounts), Product (industry mismatch), Timing (speed of transactions), and Externality (lack of real-world trade)." },
-    { tab: "view-network", title: "Interactive Network Map", text: "Use the Interconnection Map to visualize the entire dataset. Dimmed edges represent normal trade; bright edges represent detected fraud. You can click any node to trace its connections." },
-    { tab: "view-ledger", title: "Live Ledger Injection", text: "Go to the Invoice Ledger and click 'ADD INVOICE' to manually inject a transaction. The backend will instantly rescore the network and update the UI if new fraud rings are formed." }
-  ];
-  var currentStep = 0;
-  
-  function updateGuide() {
-    var step = tourSteps[currentStep];
-    
-    if (window.switchTab) {
-      window.switchTab(step.tab);
+  function setupTour() {
+    var overlay = document.getElementById("tour-overlay");
+    var spotlight = document.getElementById("tour-spotlight");
+    var card = document.getElementById("tour-card");
+    var counterEl = document.getElementById("tour-counter");
+    var titleEl = document.getElementById("tour-title");
+    var bodyEl = document.getElementById("tour-body");
+    var backBtn = document.getElementById("tour-back");
+    var nextBtn = document.getElementById("tour-next");
+    var skipBtn = document.getElementById("tour-skip");
+    var guideBtn = document.getElementById("guide-me-btn");
+    if (!overlay || !card) return;
+
+    // Derive top ring from the sorted queue (first card)
+    function topRingId() {
+      if (typeof SCORED === "undefined" || !SCORED.rings || !SCORED.rings.length) return null;
+      var sorted = SCORED.rings.slice().sort(function(a, b) {
+        return (b.expected_loss || 0) - (a.expected_loss || 0);
+      });
+      return sorted[0].ring_id;
     }
-    
-    // Custom Step Triggers
-    if (currentStep === 1 || currentStep === 2 || currentStep === 3) {
-      // Ensure the first ring is expanded
-      var firstHeader = document.querySelector(".ring-header-btn");
-      if (firstHeader && firstHeader.getAttribute("aria-expanded") !== "true") {
-        firstHeader.click();
+
+    var STEPS = [
+      {
+        stage: null,
+        targetSelector: null,
+        title: "Welcome to Ouroboros",
+        body: "Ouroboros helps financial investigators detect <strong>circular invoice fraud</strong> — where businesses pass the same money in circles to artificially inflate credit.<br><br>The top navigation bar organizes your investigation into <strong>4 connected modules</strong>: Review, Explore, Entities, and Verify."
+      },
+      {
+        stage: "view-queue",
+        targetSelector: null, // set dynamically to the top ring card
+        title: "01 · Ring Review (Triage Queue)",
+        body: "Your prioritized action inbox. The <strong>5 critical fraud rings</strong> appear right here, ranked by total financial risk.<br><br><strong>What to do:</strong> Click any card to expand it. You can inspect the loop graph, 4 score breakdown bars, and invoice-by-invoice transaction trail."
+      },
+      {
+        stage: "view-network",
+        targetSelector: "#net-ring-select",
+        title: "02 · Interconnection Map",
+        body: "A visual bird's-eye view of all 60 companies.<br><br>• <strong>Scroll to zoom</strong> and <strong>drag to pan</strong>.<br>• <strong>Red lines</strong> show circular fraud; <strong>dashed gold lines</strong> show shared directors.<br>• <strong>Click any node</strong> to see its counterparty exposure in the right rail."
+      },
+      {
+        stage: "view-directory",
+        targetSelector: "#directory-body",
+        title: "03 · Entity Directory",
+        body: "A directory of every business in the dataset.<br><br>Companies with high <strong>RINGS</strong> count are key hub orchestrators.<br><br><strong>What to do:</strong> Click any company name to open its complete corporate dossier, GSTIN details, and full trade network."
+      },
+      {
+        stage: "view-ledger",
+        targetSelector: ".ledger-header-strip",
+        title: "04 · Invoice Ledger & Testing",
+        body: "Audit raw invoice records and test new intelligence.<br><br>Search or filter invoices by seller, buyer, or HS commodity code. Click <strong>+ ADD INVOICE</strong> to input a new document — the backend will instantly <strong>re-run detection</strong> across the platform!"
+      },
+      {
+        stage: null,
+        targetSelector: null,
+        title: "Quick Tips for Navigating",
+        body: "• <strong>Glossary:</strong> Hover over any underlined term for an instant explanation.<br>• <strong>Return to Intro:</strong> Click the animated <strong>Ouroboros</strong> logo in the top-left anytime to return to the constellation screen.<br>• <strong>Reopen Guide:</strong> Click <strong>GUIDE ME</strong> anytime to review these steps."
       }
-    } else {
-      // Close the first ring if it was opened by the guide
-      var firstHeader = document.querySelector(".ring-header-btn");
-      if (firstHeader && firstHeader.getAttribute("aria-expanded") === "true" && currentStep !== 0) {
-        // Leave it alone if user wants it open, or collapse it
-        // actually better to just let it be.
+    ];
+
+    var currentStep = 0;
+    var resizeTimer;
+
+    function measureTarget(sel) {
+      if (!sel) return null;
+      var el = document.querySelector(sel);
+      if (!el) return null;
+      el.scrollIntoView({ block: "center" });
+      return el.getBoundingClientRect();
+    }
+
+    function positionSpotlight(rect) {
+      var pad = 6;
+      if (!rect) {
+        // No target — hide spotlight, centre card
+        spotlight.style.display = "none";
+        card.classList.add("center");
+        return;
+      }
+      card.classList.remove("center");
+      spotlight.style.display = "block";
+      spotlight.style.top = (rect.top - pad) + "px";
+      spotlight.style.left = (rect.left - pad) + "px";
+      spotlight.style.width = (rect.width + pad * 2) + "px";
+      spotlight.style.height = (rect.height + pad * 2) + "px";
+    }
+
+    function showStep(n) {
+      var step = STEPS[n];
+      counterEl.textContent = (n + 1) + " / " + STEPS.length;
+      titleEl.textContent = step.title;
+      bodyEl.innerHTML = step.body;
+      backBtn.disabled = (n === 0);
+      nextBtn.textContent = (n === STEPS.length - 1) ? "FINISH" : "NEXT";
+
+      // Switch stage
+      if (step.stage) {
+        var tabBtn = document.querySelector(".tab-btn[data-target='" + step.stage + "']");
+        if (tabBtn) tabBtn.click();
+      }
+
+      // Step 1: expand top ring card
+      var sel = step.targetSelector;
+      if (n === 1) {
+        var tid = topRingId();
+        if (tid) {
+          sel = "#" + tid;
+          window.viewRing(tid);
+        }
+      }
+      // Step 2: set network ring selector
+      if (n === 2) {
+        var tid = topRingId();
+        var rs = document.getElementById("net-ring-select");
+        if (rs && tid) {
+          rs.value = tid;
+          rs.dispatchEvent(new Event("change"));
+        }
+      }
+
+      // Wait one frame for DOM changes then measure
+      setTimeout(function() {
+        var rect = measureTarget(sel);
+        positionSpotlight(rect);
+      }, 100);
+    }
+
+    function tourStart() {
+      currentStep = 0;
+      overlay.classList.remove("hidden");
+      overlay.classList.add("active");
+      showStep(0);
+    }
+
+    function tourEnd(markSeen) {
+      overlay.classList.add("hidden");
+      overlay.classList.remove("active");
+      spotlight.style.display = "none";
+      if (markSeen) {
+        try { localStorage.setItem("ouroboros_guide_seen", "1"); } catch(e) {}
       }
     }
-    
-    if (currentStep === 5) {
-      // Open add invoice modal
-      var addBtn = document.getElementById("add-invoice-btn");
-      if (addBtn) addBtn.click();
-    } else {
-      // Close add invoice modal if we navigate away
-      var modal = document.getElementById("add-invoice-modal");
-      if (modal && !modal.classList.contains("hidden")) {
-        var closeBtn = modal.querySelector(".modal-close");
-        if (closeBtn) closeBtn.click();
+
+    nextBtn.addEventListener("click", function() {
+      if (currentStep >= STEPS.length - 1) {
+        tourEnd(true);
+        return;
       }
-    }
-    
-    document.getElementById("guide-title").textContent = step.title;
-    document.getElementById("guide-body").textContent = step.text;
-    document.getElementById("guide-dots").textContent = (currentStep + 1) + " / " + tourSteps.length;
-    
-    document.getElementById("guide-prev").style.visibility = currentStep === 0 ? "hidden" : "visible";
-    document.getElementById("guide-next").textContent = currentStep === tourSteps.length - 1 ? "FINISH" : "NEXT";
+      currentStep++;
+      showStep(currentStep);
+    });
+
+    backBtn.addEventListener("click", function() {
+      if (currentStep <= 0) return;
+      currentStep--;
+      showStep(currentStep);
+    });
+
+    skipBtn.addEventListener("click", function() { tourEnd(true); });
+
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && !overlay.classList.contains("hidden")) {
+        tourEnd(true);
+      }
+    });
+
+    window.addEventListener("resize", function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        if (!overlay.classList.contains("hidden")) showStep(currentStep);
+      }, 150);
+    });
+
+    if (guideBtn) guideBtn.addEventListener("click", tourStart);
+
+    // window.initializeOuroboros — already wired in constellation.js:103; auto-start tour on first visit
+    window.initializeOuroboros = function() {
+      try {
+        if (!localStorage.getItem("ouroboros_guide_seen")) {
+          setTimeout(tourStart, 400);
+        }
+      } catch(e) {}
+    };
   }
-  
-  function openGuide() {
-    currentStep = 0;
-    updateGuide();
-    document.getElementById("guide-overlay").classList.remove("hidden");
-  }
-  
-  function closeGuide() {
-    document.getElementById("guide-overlay").classList.add("hidden");
-    try {
-      localStorage.setItem("ouroboros_guided_tour", "completed");
-    } catch(e) {}
-  }
-  
-  var gClose = document.getElementById("guide-close");
-  var gPrev = document.getElementById("guide-prev");
-  var gNext = document.getElementById("guide-next");
-  var gBtn = document.getElementById("guide-me-btn");
-  
-  if(gClose) gClose.addEventListener("click", closeGuide);
-  if(gPrev) gPrev.addEventListener("click", function() {
-    if (currentStep > 0) { currentStep--; updateGuide(); }
-  });
-  if(gNext) gNext.addEventListener("click", function() {
-    if (currentStep < tourSteps.length - 1) { currentStep++; updateGuide(); }
-    else { closeGuide(); }
-  });
-  if(gBtn) gBtn.addEventListener("click", openGuide);
-  
-  setTimeout(function() {
-    var tourDone = false;
-    try { tourDone = localStorage.getItem("ouroboros_guided_tour") === "completed"; } catch(e) {}
-    if (!tourDone && gClose) openGuide();
-  }, 1000);
+  setupTour();
 
 })();

@@ -1579,3 +1579,77 @@ body {
 .hidden-app {
   display: none !important;
 }
+
+
+/* Tour overlay */
+#tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+}
+#tour-overlay.active {
+  pointer-events: none;
+}
+#tour-spotlight {
+  position: fixed;
+  border-radius: 3px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.72);
+  transition: top 200ms var(--ease-out),
+              left 200ms var(--ease-out),
+              width 200ms var(--ease-out),
+              height 200ms var(--ease-out);
+  pointer-events: none;
+}
+#tour-card {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-active);
+  border-radius: 4px;
+  padding: 20px 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+  z-index: 9001;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#tour-card.center {
+  bottom: 50%;
+  right: 50%;
+  transform: translate(50%, 50%);
+}
+#tour-counter {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+#tour-title {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--accent-teal);
+}
+#tour-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+#tour-body strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+#tour-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+#tour-skip {
+  margin-left: auto;
+  color: var(--text-dark);
+  border-color: transparent;
