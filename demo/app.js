@@ -790,15 +790,19 @@ window.removeInvestigatorInvoice = function(id) {
     var aggs = rings.filter(function (r) { return typeof r.aggregate === "number" || typeof r.aggregate_score === "number"; });
     var avgAgg = aggs.length ? aggs.reduce(function (s, r) { return s + (r.aggregate || r.aggregate_score || 0); }, 0) / aggs.length : 0;
     
-    var s = "<div style='display:flex; justify-content: space-between; flex: 1; width: 100%;'>";
+    var div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.justifyContent = "space-between";
+    div.style.flex = "1";
+    div.style.width = "100%";
+    
+    var s = "";
     s += "<div class='metric-group'><span class='metric-label'>FLAGGED</span> <span class='metric-val mono' style='color:var(--accent-teal)'>" + count + "</span></div>";
-    s += "<div class='metric-group'><span class='metric-label'>EXPECTED LOSS</span> <span class='metric-val risk mono'>₹" + crCount.toFixed(2) + " Cr</span></div>";
+    s += "<div class='metric-group'><span class='metric-label'>EXPECTED LOSS</span> <span class='metric-val risk mono'>&#8377;" + crCount.toFixed(2) + " Cr</span></div>";
     s += "<div class='metric-group'><span class='metric-label'>CORPORATE CLOSED</span> <span class='metric-val mono'>" + corpCount + "</span></div>";
     s += "<div class='metric-group'><span class='metric-label'>TRANSACTION CLOSED</span> <span class='metric-val mono'>" + transCount + "</span></div>";
     s += "<div class='metric-group'><span class='metric-label'>AVG AGGREGATE</span> <span class='metric-val mono'>" + avgAgg.toFixed(2) + "</span></div>";
-    s += "</div>";
     
-    var div = document.createElement("div");
     div.innerHTML = s;
     return div;
   }
