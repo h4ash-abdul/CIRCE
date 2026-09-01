@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     lp.style.display = 'none';
                     if (as) {
                         as.classList.remove('hidden-app');
-                        if (window.initializeOuroboros) window.initializeOuroboros();
+                        if (window.initializeCirce) window.initializeCirce();
                         if (window.initializeMap) window.initializeMap();
                     }
                 }, 400);
