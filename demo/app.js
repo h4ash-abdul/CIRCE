@@ -6,7 +6,7 @@
 // --- PHASE 6 ADDITIONS ---
 window.INVESTIGATOR_INVOICES = {};
 try {
-  var stored = localStorage.getItem('ouroboros_investigator_invoices');
+  var stored = localStorage.getItem('Circe_investigator_invoices');
   if (stored) {
     window.INVESTIGATOR_INVOICES = JSON.parse(stored);
   }
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (Object.keys(window.INVESTIGATOR_INVOICES).length > 0) clearBtn.style.display = "inline-block";
     clearBtn.onclick = function() {
       if (confirm("Are you sure you want to clear all investigator-added data?")) {
-        localStorage.removeItem("ouroboros_investigator_invoices");
+        localStorage.removeItem("Circe_investigator_invoices");
         window.INVESTIGATOR_INVOICES = {};
         clearBtn.style.display = "none";
         
@@ -186,7 +186,7 @@ window.submitAddInvoice = function() {
   };
 
   window.INVESTIGATOR_INVOICES[id] = inv;
-  localStorage.setItem("ouroboros_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
+  localStorage.setItem("Circe_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
   
   var invList = Object.values(window.INVESTIGATOR_INVOICES);
   err.textContent = "Rescoring network... please wait.";
@@ -226,14 +226,14 @@ window.submitAddInvoice = function() {
     err.style.color = "var(--risk-coral)";
     // Revert
     delete window.INVESTIGATOR_INVOICES[id];
-    localStorage.setItem("ouroboros_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
+    localStorage.setItem("Circe_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
   });
 };
 
 window.removeInvestigatorInvoice = function(id) {
   if (confirm("Remove this investigator-added invoice?")) {
     delete window.INVESTIGATOR_INVOICES[id];
-    localStorage.setItem("ouroboros_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
+    localStorage.setItem("Circe_investigator_invoices", JSON.stringify(window.INVESTIGATOR_INVOICES));
     closeModal("invoice-modal");
     
     var invList = Object.values(window.INVESTIGATOR_INVOICES);
@@ -598,7 +598,7 @@ window.removeInvestigatorInvoice = function(id) {
 
     var isExpanded = false;
     try {
-      var stateStr = localStorage.getItem("ouroboros_expanded_rings") || "{}";
+      var stateStr = localStorage.getItem("Circe_expanded_rings") || "{}";
       var state = JSON.parse(stateStr);
       isExpanded = (rank === 1 && state[ring.ring_id] === undefined) ? true : !!state[ring.ring_id];
     } catch(e) {
@@ -633,10 +633,10 @@ window.removeInvestigatorInvoice = function(id) {
       header.setAttribute("aria-expanded", newState.toString());
       bodyWrap.style.display = newState ? "block" : "none";
       try {
-        var stateStr = localStorage.getItem("ouroboros_expanded_rings") || "{}";
+        var stateStr = localStorage.getItem("Circe_expanded_rings") || "{}";
         var state = JSON.parse(stateStr);
         state[ring.ring_id] = newState;
-        localStorage.setItem("ouroboros_expanded_rings", JSON.stringify(state));
+        localStorage.setItem("Circe_expanded_rings", JSON.stringify(state));
       } catch(e) {}
     };
     
@@ -2643,8 +2643,8 @@ window.removeInvestigatorInvoice = function(id) {
       {
         stage: null,
         targetSelector: null,
-        title: "Welcome to Ouroboros",
-        body: "Ouroboros helps financial investigators detect <strong>circular invoice fraud</strong> — where businesses pass the same money in circles to artificially inflate credit.<br><br>The top navigation bar organizes your investigation into <strong>4 connected modules</strong>: Review, Explore, Entities, and Verify."
+        title: "Welcome to Circe",
+        body: "Circe helps financial investigators detect <strong>circular invoice fraud</strong> — where businesses pass the same money in circles to artificially inflate credit.<br><br>The top navigation bar organizes your investigation into <strong>4 connected modules</strong>: Review, Explore, Entities, and Verify."
       },
       {
         stage: "view-queue",
@@ -2674,7 +2674,7 @@ window.removeInvestigatorInvoice = function(id) {
         stage: null,
         targetSelector: null,
         title: "Quick Tips for Navigating",
-        body: "• <strong>Glossary:</strong> Hover over any underlined term for an instant explanation.<br>• <strong>Return to Intro:</strong> Click the animated <strong>Ouroboros</strong> logo in the top-left anytime to return to the constellation screen.<br>• <strong>Reopen Guide:</strong> Click <strong>GUIDE ME</strong> anytime to review these steps."
+        body: "• <strong>Glossary:</strong> Hover over any underlined term for an instant explanation.<br>• <strong>Return to Intro:</strong> Click the animated <strong>Circe</strong> logo in the top-left anytime to return to the constellation screen.<br>• <strong>Reopen Guide:</strong> Click <strong>GUIDE ME</strong> anytime to review these steps."
       }
     ];
 
@@ -2715,7 +2715,7 @@ window.removeInvestigatorInvoice = function(id) {
 
       // Switch stage
       if (step.stage) {
-        var tabBtn = document.querySelector(".tab-btn[data-target='" + step.stage + "']");
+        var tabBtn = document.querySelector(".step[data-target='" + step.stage + "']");
         if (tabBtn) tabBtn.click();
       }
 
@@ -2757,7 +2757,7 @@ window.removeInvestigatorInvoice = function(id) {
       overlay.classList.remove("active");
       spotlight.style.display = "none";
       if (markSeen) {
-        try { localStorage.setItem("ouroboros_guide_seen", "1"); } catch(e) {}
+        try { localStorage.setItem("Circe_guide_seen", "1"); } catch(e) {}
       }
     }
 
@@ -2793,10 +2793,10 @@ window.removeInvestigatorInvoice = function(id) {
 
     if (guideBtn) guideBtn.addEventListener("click", tourStart);
 
-    // window.initializeOuroboros — already wired in constellation.js:103; auto-start tour on first visit
-    window.initializeOuroboros = function() {
+    // window.initializeCirce — already wired in constellation.js:103; auto-start tour on first visit
+    window.initializeCirce = function() {
       try {
-        if (!localStorage.getItem("ouroboros_guide_seen")) {
+        if (!localStorage.getItem("Circe_guide_seen")) {
           setTimeout(tourStart, 400);
         }
       } catch(e) {}
