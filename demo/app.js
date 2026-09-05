@@ -2340,6 +2340,50 @@ window.removeInvestigatorInvoice = function(id) {
       }
     });
 
+    // Touch gesture support (Mobile Pan & Pinch Zoom)
+    var touchStartDist = 0;
+    var touchStartZoom = 1;
+    svg.addEventListener("touchstart", function(e) {
+      if (e.touches.length === 1) {
+        if (e.target.closest && e.target.closest(".network-node")) return;
+        isPanning = true;
+        startMouseX = e.touches[0].clientX;
+        startMouseY = e.touches[0].clientY;
+        startPanX = panX;
+        startPanY = panY;
+      } else if (e.touches.length === 2) {
+        isPanning = false;
+        var dx = e.touches[0].clientX - e.touches[1].clientX;
+        var dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchStartDist = Math.hypot(dx, dy);
+        touchStartZoom = zoomLevel;
+      }
+    }, { passive: true });
+
+    window.addEventListener("touchmove", function(e) {
+      if (isPanning && e.touches.length === 1) {
+        var rect = svg.getBoundingClientRect();
+        var scaleX = 1800 / (rect.width || 1800);
+        var scaleY = 1100 / (rect.height || 1100);
+        panX = startPanX + (e.touches[0].clientX - startMouseX) * scaleX;
+        panY = startPanY + (e.touches[0].clientY - startMouseY) * scaleY;
+        applyTransform();
+      } else if (e.touches.length === 2 && touchStartDist > 0) {
+        var dx = e.touches[0].clientX - e.touches[1].clientX;
+        var dy = e.touches[0].clientY - e.touches[1].clientY;
+        var dist = Math.hypot(dx, dy);
+        var scaleRatio = dist / touchStartDist;
+        setZoom(touchStartZoom * scaleRatio, 900, 550);
+      }
+    }, { passive: true });
+
+    window.addEventListener("touchend", function(e) {
+      if (e.touches.length === 0) {
+        isPanning = false;
+        touchStartDist = 0;
+      }
+    });
+
     // Interaction functions
     var activeFocusNode = null;
 

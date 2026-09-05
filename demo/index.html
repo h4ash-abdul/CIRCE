@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>CIRCE - FINANCIAL RING INTELLIGENCE</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=tourfix13">
+<link rel="stylesheet" href="styles.css?v=tourfix14">
 </head>
 <body>
 
@@ -53,13 +53,13 @@
 
         .circe-title-text {
             font-family: 'Yellowtail', cursive;
-            font-size: clamp(120px, 17vw, 240px); 
+            font-size: clamp(64px, 16vw, 240px); 
             font-weight: 400;
             color: #E8C468;
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             text-align: center;
-            transform: translateX(-3%) rotate(-3deg);
+            transform: translateX(-2%) rotate(-3deg);
             line-height: 1;
             text-shadow: 0 0 15px rgba(232, 196, 104, 0.3);
             
@@ -137,6 +137,30 @@
         @keyframes elegantFadeUp {
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @media (max-width: 640px) {
+            .circe-title-text {
+                font-size: clamp(52px, 17vw, 110px);
+                padding: 8px;
+            }
+            .eyebrow-text {
+                font-size: 9px;
+                letter-spacing: 0.15em;
+            }
+            .tagline-text {
+                font-size: 11px;
+                letter-spacing: 0.15em;
+                margin-bottom: 24px;
+            }
+            .enter-button {
+                font-size: 11px;
+                padding: 12px 24px;
+                letter-spacing: 0.1em;
+            }
+            .footer-meta-text {
+                font-size: 9px;
+            }
+        }
     </style>
 </div>
 
@@ -184,7 +208,7 @@
     <div id="view-queue" class="view-section active">
       <div class="ledger-header-strip" style="margin-bottom: 16px;">
         <div class="ledger-controls">
-          <input type="text" id="ring-search" class="control-input" placeholder="Search Ring ID..." style="width: 200px;" />
+          <input type="text" id="ring-search" class="control-input" placeholder="Search Ring ID..." />
           
           <select id="ring-filter-agg" class="control-select">
             <option value="all">ALL AGGREGATE SCORES</option>
@@ -462,9 +486,9 @@
   </div>
 </div>
 
-<script src="data.js?v=tourfix13"></script>
-<script src="app.js?v=tourfix13"></script>
-<script src="constellation.js?v=tourfix13"></script>
+<script src="data.js?v=tourfix14"></script>
+<script src="app.js?v=tourfix14"></script>
+<script src="constellation.js?v=tourfix14"></script>
 <script>
   // Global stats populator
   document.addEventListener("DOMContentLoaded", function() {

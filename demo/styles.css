@@ -1660,3 +1660,360 @@ body {
 #tour-skip:hover {
   background-color: rgba(232, 196, 104, 0.1);
 }
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE DESIGN (TABLETS & PHONES)
+   ========================================================================== */
+
+#directory-table-container,
+#ledger-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border-muted);
+  border-radius: 2px;
+  margin-bottom: 16px;
+}
+
+#directory-table-container .data-table,
+#ledger-table-container .data-table {
+  border: none;
+}
+
+@media (max-width: 900px) {
+  .ledger-header-strip {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .ledger-controls {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .ledger-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  /* TOPBAR */
+  .topbar {
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    gap: 10px;
+    justify-content: space-between;
+  }
+  .topbar-left {
+    gap: 8px;
+  }
+  .brand {
+    font-size: 26px;
+    padding: 4px 6px 10px 0;
+  }
+  .brand-sub {
+    display: none;
+  }
+  .topbar-right {
+    margin-left: auto;
+    gap: 8px;
+  }
+  .topbar-center {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    margin: 4px 0 0 0;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-muted);
+  }
+  .global-stats-wrapper {
+    width: 100%;
+    justify-content: space-around;
+    padding: 4px 0;
+  }
+  .global-stat {
+    padding: 0 6px;
+    gap: 4px;
+  }
+  .gs-header {
+    font-size: 10px;
+  }
+  .gs-label {
+    font-size: 9px;
+  }
+  .gs-val {
+    font-size: 14px;
+  }
+
+  /* STEPPER NAVIGATION */
+  .stepper-nav {
+    padding: 10px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .stepper-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .stepper-container {
+    width: max-content;
+    min-width: 100%;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    padding: 0 2px;
+  }
+  .step-line {
+    display: none;
+  }
+  .step {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 7px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-muted);
+    border-radius: 4px;
+  }
+  .step.active {
+    background: var(--accent-teal-dim);
+    border-color: var(--accent-teal);
+  }
+  .step-num {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+  .step-label {
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  /* CONTENT AREA */
+  .content-area {
+    padding: 12px 10px;
+  }
+
+  /* CONTROLS & FILTERS */
+  .ledger-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+  .control-input,
+  .control-select {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 130px;
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+  #ring-search {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+
+  /* SUMMARY STRIP */
+  .summary-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+  .summary-strip p {
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+
+  /* RING CARDS */
+  .ring-header {
+    padding: 12px;
+  }
+  .ring-header-btn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .ring-header-btn .rh-summary {
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  .ring-header-btn .rh-right {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    gap: 8px !important;
+    border-top: 1px solid var(--border-muted) !important;
+    padding-top: 8px !important;
+    margin-top: 2px !important;
+  }
+  .ring-header-btn .rh-toggle {
+    margin-right: 0 !important;
+  }
+
+  /* RING BODY */
+  .ring-body {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px;
+  }
+  .ring-viz {
+    width: 100%;
+    height: 280px;
+    min-height: 250px;
+    padding: 8px;
+  }
+  .ring-scores {
+    gap: 10px;
+  }
+  .score-row {
+    grid-template-columns: 105px 1fr 38px;
+    gap: 10px;
+    font-size: 11px;
+  }
+  .sig-name {
+    font-size: 11px;
+  }
+
+  /* TRAIL / TIMELINE */
+  .trail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+  }
+  .trail-stat-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .graph-legend {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    width: 100%;
+    margin-left: 0 !important;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-muted);
+  }
+  .trail-item, .timeline-event {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px;
+  }
+  .ti-meta {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .ti-flow {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* INTERCONNECTION MAP */
+  .network-layout {
+    min-height: unset;
+  }
+  .network-canvas-wrap {
+    min-height: 360px;
+    height: 52vh;
+  }
+  .network-canvas-wrap svg {
+    min-height: 320px;
+  }
+  .network-legend-bar {
+    gap: 8px 12px;
+    padding: 8px 10px;
+    font-size: 9px;
+  }
+  .network-rail {
+    padding: 12px;
+  }
+  .network-zoom-controls {
+    margin-left: 0 !important;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+
+  /* TABLES */
+  .data-table {
+    min-width: 680px;
+  }
+  .data-table th, .data-table td {
+    padding: 10px 12px;
+  }
+
+  /* MODALS */
+  .modal-window,
+  .modal-window.entity-window,
+  .modal-window.add-invoice-window {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 88vh !important;
+  }
+  .modal-body {
+    padding: 14px;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .form-grid {
+    gap: 12px;
+  }
+
+  /* TOUR OVERLAY */
+  #tour-card {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 16px 18px;
+    gap: 10px;
+  }
+  #tour-title {
+    font-size: 14px;
+  }
+  #tour-body {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  /* TOOLTIPS */
+  [data-gloss]:hover::after {
+    left: 0;
+    transform: none;
+    max-width: 220px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* EXTRA SMALL PHONES */
+  .control-select {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .score-row {
+    grid-template-columns: 90px 1fr 34px;
+    gap: 6px;
+    font-size: 10px;
+  }
+  .sig-name {
+    font-size: 10px;
+  }
+  .status-badge {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+  .btn {
+    padding: 6px 10px;
+  }
+  .ring-header-btn .rh-right {
+    flex-wrap: wrap;
+  }
+}
