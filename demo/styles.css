@@ -1662,41 +1662,34 @@ body {
 }
 
 /* ==========================================================================
-   MOBILE & RESPONSIVE DESIGN (TABLETS & PHONES)
+   MOBILE & PHONE RESPONSIVE DESIGN (ONLY KICKS IN ON PHONE / VIEWPORT <= 768px)
    ========================================================================== */
 
-#directory-table-container,
-#ledger-table-container {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border: 1px solid var(--border-muted);
-  border-radius: 2px;
-  margin-bottom: 16px;
-}
+@media (max-width: 768px) {
+  #directory-table-container,
+  #ledger-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border-muted);
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
 
-#directory-table-container .data-table,
-#ledger-table-container .data-table {
-  border: none;
-}
+  #directory-table-container .data-table,
+  #ledger-table-container .data-table {
+    border: none;
+  }
 
-@media (max-width: 900px) {
   .ledger-header-strip {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
-  .ledger-controls {
-    flex-wrap: wrap;
-    width: 100%;
-  }
   .ledger-actions {
     width: 100%;
     justify-content: flex-start;
   }
-}
-
-@media (max-width: 768px) {
   /* TOPBAR */
   .topbar {
     flex-wrap: wrap;
